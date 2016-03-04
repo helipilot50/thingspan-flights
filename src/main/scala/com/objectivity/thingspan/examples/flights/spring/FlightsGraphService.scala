@@ -8,13 +8,22 @@ import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.commons.cli.PosixParser
+
 import java.io.PrintWriter
 import java.io.StringWriter
+
 import com.objectivity.thingspan.examples.flights.FlightsLoader
-import org.apache.spark.sql.sources.CreatableRelationProvider
 import com.objectivity.thingspan.examples.flights.CreateRelationships
+
 import org.springframework.boot.context.web.SpringBootServletInitializer
 import org.springframework.boot.builder.SpringApplicationBuilder
+import org.springframework.context.annotation.Bean
+
+import org.apache.spark.{SparkConf, SparkContext}
+import org.apache.spark.sql.{Row, SQLContext, DataFrame}
+import org.apache.spark.sql.SaveMode
+import org.apache.spark.sql.sources.CreatableRelationProvider
+
 
 @SpringBootApplication
 class FlightsGraphService extends SpringBootServletInitializer{
@@ -56,5 +65,12 @@ object FlightsGraphService {
 		}
 	}
 
+	@Bean
+	def sparkContext() : SparkContext = {
+			var conf = new SparkConf()
+			conf.setAppName("FlightGraphService")
+			conf.setMaster("local[*]")
+			new SparkContext(conf)
+	}
 
 }
