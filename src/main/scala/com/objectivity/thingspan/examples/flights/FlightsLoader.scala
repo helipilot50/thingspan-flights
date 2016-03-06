@@ -30,6 +30,7 @@ object FlightsLoader {
 					p(2).toInt,     // DAY_OF_MONTH  
 					p(3).trim,      // FL_DATE
 					p(4).toInt,     // AIRLINE_ID
+					p(5).trim,      // CARRIER
 					p(6).toInt,     // FL_NUMBER
 					p(8).trim,      // ORIGIN
 					p(11).trim,     // DESTINATION

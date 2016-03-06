@@ -24,15 +24,15 @@ function prepareItems() {
   var links = {};
 
   _.each(flightData, function (flight) {
- 
+	  console.log(flight)
       var from, to;
 
-      from = flight[3];
-      to = flight[4];
+      from = flight.origin;
+      to = flight.destination;
 
-      var id = from + '-' + to;
-
-      var dt = new Date(flight[0]);
+      var id = flight.flightDate + "-" + from + '-' + to + '-' + flight.carrier + '-' + flight.flightNumber;
+      console.log(id)
+      var dt = new Date(flight.flightDate);
 
       nodeids[from] = true;
       nodeids[to] = true;
