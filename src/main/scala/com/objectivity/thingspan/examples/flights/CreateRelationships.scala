@@ -24,9 +24,6 @@ object CreateRelationships {
 				// Create Spark Context
 				val sparkContext = new SparkContext(sparkConf)
 
-
-				val bootFile: String = Constants.Boot // Bootfile for federated database
-
 				try {
 					// Create SQL Context
 					println("Creating SQL context")
@@ -39,7 +36,7 @@ object CreateRelationships {
 					println("Reading in Flight data frame with OIDs")
 					val flightsDF = sqlContext.read.
 					format("com.objy.spark.sql").
-					option("objy.bootFilePath", bootFile).
+					option("objy.bootFilePath", AppConfig.Boot).
 					option("objy.dataClassName", "com.objectivity.thingspan.examples.flights.Flight").
 					option("objy.addOidColumn", "flightOid").
 					load 
@@ -48,7 +45,7 @@ object CreateRelationships {
 					println("Reading in Airport data frame with OIDs")
 					val airportsDF = sqlContext.read.
 					format("com.objy.spark.sql").
-					option("objy.bootFilePath", bootFile).
+					option("objy.bootFilePath", AppConfig.Boot).
 					option("objy.dataClassName", "com.objectivity.thingspan.examples.flights.Airport").
 					option("objy.addOidColumn", "airportOid").
 					load 
@@ -57,7 +54,7 @@ object CreateRelationships {
 					println("Reading in Airline data frame with OIDs")
 					val airlinesDF = sqlContext.read.
 					format("com.objy.spark.sql").
-					option("objy.bootFilePath", bootFile).
+					option("objy.bootFilePath", AppConfig.Boot).
 					option("objy.dataClassName", "com.objectivity.thingspan.examples.flights.Airline").
 					option("objy.addOidColumn", "airlineOid").
 					load 
@@ -77,7 +74,7 @@ object CreateRelationships {
 					flightAirlineDF.write.
 					mode(SaveMode.Overwrite).
 					format("com.objy.spark.sql").
-					option("objy.bootFilePath", bootFile).
+					option("objy.bootFilePath", AppConfig.Boot).
 					option("objy.dataClassName", "com.objectivity.thingspan.examples.flights.Airline").
 					option("objy.updateByOid", "airlineOid").
 					save() 
@@ -92,7 +89,7 @@ object CreateRelationships {
 					flightOriginDF.write.
 					mode(SaveMode.Overwrite).
 					format("com.objy.spark.sql").
-					option("objy.bootFilePath", bootFile).
+					option("objy.bootFilePath", AppConfig.Boot).
 					option("objy.dataClassName", "com.objectivity.thingspan.examples.flights.Flight").
 					option("objy.updateByOid", "flightOid").
 					save() 
@@ -101,7 +98,7 @@ object CreateRelationships {
 					flightDestinationnDF.write.
 					mode(SaveMode.Overwrite).
 					format("com.objy.spark.sql").
-					option("objy.bootFilePath", bootFile).
+					option("objy.bootFilePath", AppConfig.Boot).
 					option("objy.dataClassName", "com.objectivity.thingspan.examples.flights.Flight").
 					option("objy.updateByOid", "flightOid").
 					save() 

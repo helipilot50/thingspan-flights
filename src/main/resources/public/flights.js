@@ -22,7 +22,7 @@ function linkWidth(count) {
 function prepareItems() {
   var nodeids = {};
   var links = {};
-
+  
   _.each(flightData, function (flight) {
 	  console.log(flight)
       var from, to;

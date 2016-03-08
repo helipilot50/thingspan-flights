@@ -8,21 +8,18 @@ import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.commons.cli.PosixParser
-
 import java.io.PrintWriter
 import java.io.StringWriter
-
 import com.objectivity.thingspan.examples.flights.FlightsLoader
 import com.objectivity.thingspan.examples.flights.CreateRelationships
-
 import org.springframework.boot.context.web.SpringBootServletInitializer
 import org.springframework.boot.builder.SpringApplicationBuilder
 import org.springframework.context.annotation.Bean
-
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.{Row, SQLContext, DataFrame}
 import org.apache.spark.sql.SaveMode
 import org.apache.spark.sql.sources.CreatableRelationProvider
+import com.objectivity.thingspan.examples.flights.AppConfig
 
 
 @SpringBootApplication
@@ -40,6 +37,7 @@ object FlightsGraphService {
 		var options = new Options();
 		options.addOption("l", "load", false, "Load flight data");
 		options.addOption("r", "relation", false, "Create relationships");
+		options.addOption("t", "test", false, "Use test data");
 		options.addOption("u", "usage", false, "Print usage.");
 
 		val parser = new PosixParser()
@@ -57,20 +55,22 @@ object FlightsGraphService {
 
 		if (cl.hasOption("l")){
 			FlightsLoader.main(args)
-		}else if (cl.hasOption("r")){
+		} else if (cl.hasOption("r")){
 			CreateRelationships.main(args)
 		} else {
-
+		  if (cl.hasOption("t"))
+		    AppConfig.TestData = true
 			SpringApplication.run(classOf[FlightsGraphService])
 		}
 	}
 
-	@Bean
+	@Bean(destroyMethod="close")
 	def sparkContext() : SparkContext = {
 			var conf = new SparkConf()
 			conf.setAppName("FlightGraphService")
-			conf.setMaster("local[*]")
+			conf.setMaster("local[1]")
 			new SparkContext(conf)
 	}
+	
 
 }

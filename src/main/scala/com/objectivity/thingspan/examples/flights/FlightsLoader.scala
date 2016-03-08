@@ -13,7 +13,7 @@ class FlightLine(line:Array[String]) extends Serializable {
 object FlightsLoader {
 	def main(args: Array[String]) = {
 
-			val bootFile: String = Constants.Boot // Bootfile for federated database
+			val bootFile: String = AppConfig.Boot // Bootfile for federated database
 
 					println("Loading flights data ...")
 
@@ -24,34 +24,22 @@ object FlightsLoader {
 					val sqlContext = new SQLContext(sc);
 
 
-	val csv = sc.textFile("flights") //data directory or file with CSV flit info
-			val flightsRDD = csv.map(Flight.flightFromString(_))   
+	    val flightsCSV = sc.textFile("flights") 
+			val flightsRDD = flightsCSV.map(Flight.flightFromString(_))   
 
-			val originAirportsRDD = csv.map(_.split(",")).map(p => 
-			Airport(p(8).trim,  // ID
-					p(9).trim,      // CITY_NAME        
-					p(10).trim)     // STATE
-					).distinct()
+			val airportsCSV = sc.textFile("airports")
+			val airportsRDD = airportsCSV.map(Airport.airportFromString(_))
 
-			val destinationAirportsRDD = csv.map(_.split(",")).map(p => 
-			Airport(p(11).trim,  // ID
-					p(12).trim,      // CITY_NAME        
-					p(13).trim)      // STATE
-					).distinct()
+			val airlinesCSV = sc.textFile("airlines")
+			val airlinesRDD = airlinesCSV.map(Airline.airlineFromString(_))
 
-			val airlinesRDD = csv.map(_.split(",")).map(p => 
-			Airline(p(4).toInt,  // ID
-					p(5).trim)      // CARRIER
-					).distinct()
+			val routesCSV = sc.textFile("routes")
+			val routesRDD = routesCSV.map(Route.routeFromString(_))
 
-			val airportsRDD = originAirportsRDD.union(destinationAirportsRDD).distinct();
-
-
-	val flightsCount = flightsRDD.count
-			val originCount = originAirportsRDD.count
-			val destCount = destinationAirportsRDD.count
+	    val flightsCount = flightsRDD.count
 			val airportsCount = airportsRDD.count
 			val airlinesCount = airlinesRDD.count
+			val routesCount = routesRDD.count
 
 
 			var flightsDF = sqlContext.createDataFrame(flightsRDD)
@@ -70,6 +58,11 @@ object FlightsLoader {
 			println("Airlines schema:")
 			airlinesDF.printSchema()
 
+			var routesDF = sqlContext.createDataFrame(routesRDD)
+			println(s"Routes: $routesCount")
+			println("Routes schema:")
+			routesDF.printSchema()
+
 			var start = java.lang.System.currentTimeMillis()
 
 			airlinesDF.write.mode(SaveMode.Overwrite).
@@ -84,6 +77,12 @@ object FlightsLoader {
 			option("objy.dataClassName", "com.objectivity.thingspan.examples.flights.Airport").
 			save()
 
+			routesDF.write.mode(SaveMode.Overwrite).
+			format("com.objy.spark.sql").
+			option("objy.bootFilePath", bootFile).
+			option("objy.dataClassName", "com.objectivity.thingspan.examples.flights.Routes").
+			save()
+			
 			flightsDF.write.mode(SaveMode.Overwrite).
 			format("com.objy.spark.sql").
 			option("objy.bootFilePath", bootFile).
@@ -91,7 +90,7 @@ object FlightsLoader {
 			save()
 
 			var stop = java.lang.System.currentTimeMillis()
-			println("Time to ingest " + flightsCount + " items is: " + (stop-start) + " ms")
+			println("Time to ingest " + (flightsCount+airlinesCount+airportsCount+routesCount) + " items is: " + (stop-start) + " ms")
 
 
 
