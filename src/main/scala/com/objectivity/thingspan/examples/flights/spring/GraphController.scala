@@ -11,6 +11,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.{Row, SQLContext, DataFrame}
 import com.objectivity.thingspan.examples.flights.Constants
 import com.objectivity.thingspan.examples.flights.Airline
+import com.objectivity.thingspan.examples.flights.Flight
 
 
 @RestController
@@ -28,11 +29,14 @@ class GraphController {
 			sql
 	}
 
-	@RequestMapping(Array("/{date}"))
+	@RequestMapping(Array("/{from}/{to}"))
 	@ResponseBody
-	def list(@PathVariable("date") date : String) = {
+	def list(@PathVariable("from") low : String, @PathVariable("to") high : String) = {
 
-//			val dateFormated = date.substring(0, 3) + "/" + date.substring(4, 5) + "/" + date.substring(6)
+			val lowDate = Flight.formatDate(low.substring(0,8))
+			val lowTime = Flight.padTime(low.substring(8))
+			val highDate = Flight.formatDate(high.substring(0,8))
+			val highTime = Flight.padTime(high.substring(8))
 //
 //			val flightsDF = sqlContext.read.
 //  			format("com.objy.spark.sql").
@@ -55,7 +59,12 @@ class GraphController {
 //			val flightsJson = flightForDayDF.toJSON
 //			println(flightsJson)
 //			flightsJson
-	  TestData.someFlights()
+//	  val flights = TestData.someFlights()
+ 	  val flights = TestData.aLotOfFlights(lowDate, lowTime, highDate, highTime)
+	  val numOfFlights = flights.length
+    println(s"Flights count: $numOfFlights")
+ 	  flights.take(5).foreach { println }
+ 	  flights
 	}
 	
 

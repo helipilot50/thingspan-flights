@@ -2,7 +2,7 @@ var flightData
 
 $.ajax({
     
-    url: 'http://localhost:8080/flights/20120123',
+    url: 'http://localhost:8080/flights/201201170000/201201171200',
     success: function(flights) {
     	flightData = flights;
 //    	console.log(flightData.length)

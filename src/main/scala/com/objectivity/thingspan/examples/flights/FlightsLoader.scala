@@ -25,20 +25,7 @@ object FlightsLoader {
 
 
 	val csv = sc.textFile("flights") //data directory or file with CSV flit info
-			val flightsRDD = csv.map(_.split(",")).map(p => 
-			Flight(p(1).toInt,  // YEAR
-					p(2).toInt,     // DAY_OF_MONTH  
-					p(3).trim,      // FL_DATE
-					p(4).toInt,     // AIRLINE_ID
-					p(5).trim,      // CARRIER
-					p(6).toInt,     // FL_NUMBER
-					p(8).trim,      // ORIGIN
-					p(11).trim,     // DESTINATION
-					p(14).trim,     // DEP_TIME
-					p(15).trim,     // ARR_TIME
-					p(16).trim,     // ELAPSED_TIME
-					p(17).trim,     // AIR_TIME
-					p(18).toInt))   // DISTANCE
+			val flightsRDD = csv.map(Flight.flightFromString(_))   
 
 			val originAirportsRDD = csv.map(_.split(",")).map(p => 
 			Airport(p(8).trim,  // ID

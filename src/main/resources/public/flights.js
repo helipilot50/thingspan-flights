@@ -2,7 +2,7 @@
 //     Copyright © 2011-2016 Cambridge Intelligence Limited. 
 //     All rights reserved.
 //
-//     Sample Code
+//     Sample Code modified to display flight graph
 //
 
 var chart;
@@ -32,7 +32,7 @@ function prepareItems() {
 
       var id = flight.flightDate + "-" + from + '-' + to + '-' + flight.carrier + '-' + flight.flightNumber;
       console.log(id)
-      var dt = new Date(flight.flightDate);
+      var dt = new Date(flight.flightDate + " " + flight.departureTime);
 
       nodeids[from] = true;
       nodeids[to] = true;
