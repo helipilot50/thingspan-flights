@@ -64,7 +64,7 @@ object FlightsGraphService {
 		}
 	}
 
-	@Bean(destroyMethod="close")
+	@Bean
 	def sparkContext() : SparkContext = {
 			var conf = new SparkConf()
 			conf.setAppName("FlightGraphService")

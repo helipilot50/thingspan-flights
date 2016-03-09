@@ -49,7 +49,7 @@ object FlightsLoader {
 
 
 			var airportsDF = sqlContext.createDataFrame(airportsRDD)
-			println(s"Aitports: $airportsCount")
+			println(s"Airports: $airportsCount")
 			println("Airports schema:")
 			airportsDF.printSchema()
 

@@ -3,7 +3,7 @@ package com.objectivity.thingspan.examples.flights
 import scala.beans.BeanProperty
 
 object AppConfig { 
-	var Boot = "~/data/flights.boot"
+	var Boot = "data/flights.boot"
 			var TestData = false
 }
 
@@ -79,7 +79,7 @@ case class Route (
 		@BeanProperty var sourceAirport: String,       //	3-letter (IATA) or 4-letter (ICAO) code of the source airport.
 		@BeanProperty var sourceAirportId: Int,        //	Unique OpenFlights identifier for source airport (see Airport)
 		@BeanProperty var destinationAirport: String,  //	3-letter (IATA) or 4-letter (ICAO) code of the destination airport.
-		@BeanProperty var destinationAirportIs: Int,   // Unique OpenFlights identifier for destination airport (see Airport)
+		@BeanProperty var destinationAirportId: Int,   // Unique OpenFlights identifier for destination airport (see Airport)
 		@BeanProperty var codeshare: String,           //	"Y" if this flight is a codeshare (that is, not operated by Airline, but another carrier), empty otherwise.
 		@BeanProperty var stops: Int,                  //	Number of stops on this flight ("0" for direct)
 		@BeanProperty var equipment: String            //	3-letter codes for plane type(s) generally used on this flight, separated by spaces
@@ -91,11 +91,11 @@ object Route {
 			val p = source.split(",").map(_.trim)
 			
 			Route(p(0),  
-			    p(1).toInt,
+			   if (p(1).equalsIgnoreCase("\\N")) -1 else p(1).toInt,
 					p(2),
-			    p(3).toInt,
+			    if (p(3).equalsIgnoreCase("\\N")) -1 else p(3).toInt,
 					p(4),
-			    p(5).toInt,
+			    if (p(5).equalsIgnoreCase("\\N")) -1 else p(5).toInt,
 					p(6),
 			    p(7).toInt,
 					p(6)
