@@ -4,7 +4,8 @@ import scala.beans.BeanProperty
 
 object AppConfig { 
 	var Boot = "data/flights.boot"
-			var TestData = false
+	var TestData = false
+  var DataDirectory = "data"
 }
 
 case class Airport(

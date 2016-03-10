@@ -22,6 +22,11 @@
 	</parent>
 
 	<dependencies>
+		<dependency>
+			<groupId>thingspan-flights</groupId>
+			<artifactId>thingspan-flights-model</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 		<!-- Scala and Spark dependencies -->
 		<dependency>
 			<groupId>org.scala-lang</groupId>

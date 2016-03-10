@@ -4,6 +4,7 @@ import com.objectivity.thingspan.examples.flights.Flight
 import scala.io.Source
 import scala.util.matching.Regex
 import scala.collection.mutable.ListBuffer
+import com.objectivity.thingspan.examples.flights.AppConfig
 
 object TestData {
 
@@ -36,7 +37,7 @@ object TestData {
 
 	def aLotOfFlights(lowDate:String, lowTime:String, highDate:String, highTime:String) : Array[Flight] = {
 			var flights : ListBuffer[Flight] = ListBuffer[Flight]();
-	  Source.fromFile("flights/xbr").getLines.foreach { line => {
+	  Source.fromFile(AppConfig.DataDirectory +"/flights/xbr").getLines.foreach { line => {
 //	    println(line)
 	      val flight = Flight.flightFromString(line)
 //	    println(flight)

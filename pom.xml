@@ -9,6 +9,7 @@
   <packaging>pom</packaging>
 
   <modules>
+    <module>model</module>
     <module>dataload</module>
     <module>service</module>
   </modules>

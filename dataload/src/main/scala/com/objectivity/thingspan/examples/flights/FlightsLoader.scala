@@ -24,16 +24,16 @@ object FlightsLoader {
 					val sqlContext = new SQLContext(sc);
 
 
-	    val flightsCSV = sc.textFile("flights") 
+	    val flightsCSV = sc.textFile(AppConfig.DataDirectory +"/flights") 
 			val flightsRDD = flightsCSV.map(Flight.flightFromString(_))   
 
-			val airportsCSV = sc.textFile("airports")
+			val airportsCSV = sc.textFile(AppConfig.DataDirectory +"/airports")
 			val airportsRDD = airportsCSV.map(Airport.airportFromString(_))
 
-			val airlinesCSV = sc.textFile("airlines")
+			val airlinesCSV = sc.textFile(AppConfig.DataDirectory +"/airlines")
 			val airlinesRDD = airlinesCSV.map(Airline.airlineFromString(_))
 
-			val routesCSV = sc.textFile("routes")
+			val routesCSV = sc.textFile(AppConfig.DataDirectory +"/routes")
 			val routesRDD = routesCSV.map(Route.routeFromString(_))
 
 	    val flightsCount = flightsRDD.count

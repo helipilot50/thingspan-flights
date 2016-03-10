@@ -10,8 +10,6 @@ import org.apache.commons.cli.ParseException
 import org.apache.commons.cli.PosixParser
 import java.io.PrintWriter
 import java.io.StringWriter
-import com.objectivity.thingspan.examples.flights.FlightsLoader
-import com.objectivity.thingspan.examples.flights.CreateRelationships
 import org.springframework.boot.context.web.SpringBootServletInitializer
 import org.springframework.boot.builder.SpringApplicationBuilder
 import org.springframework.context.annotation.Bean
@@ -34,9 +32,8 @@ class FlightsGraphService extends SpringBootServletInitializer{
 
 object FlightsGraphService {
 	def main(args: Array[String])  {
-		var options = new Options();
-		options.addOption("l", "load", false, "Load flight data");
-		options.addOption("r", "relation", false, "Create relationships");
+	  var options = new Options();
+		options.addOption("d", "data", true, "Data directory");
 		options.addOption("t", "test", false, "Use test data");
 		options.addOption("u", "usage", false, "Print usage.");
 
@@ -53,15 +50,14 @@ object FlightsGraphService {
 					return
 				}
 
-		if (cl.hasOption("l")){
-			FlightsLoader.main(args)
-		} else if (cl.hasOption("r")){
-			CreateRelationships.main(args)
-		} else {
-		  if (cl.hasOption("t"))
+    if (cl.hasOption("d")){
+			val dataDirString = cl.getOptionValue("d", "data")
+			AppConfig.DataDirectory = dataDirString
+		}	
+    
+    if (cl.hasOption("t"))
 		    AppConfig.TestData = true
 			SpringApplication.run(classOf[FlightsGraphService])
-		}
 	}
 
 	@Bean
