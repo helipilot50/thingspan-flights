@@ -3,11 +3,8 @@ import org.scalatest.FunSuite
 import scala.io.Source
 
 class ModelTests extends FunSuite {
-//  test("Airport load Tonga") {
-//	      val airport = Airport.airportFromString("""5881,"Mata'aho Airport","Angaha, Niuafo'ou Island","Tonga","NFO","NFTO",-15.5708,-175.633,160,13,"U","Pacific/Tongatapu"""")
-//	    println(airport)
-//    
-//  }
+  AppConfig.DataDirectory = "../data"
+
   test("Airport load") {
  	  Source.fromFile(AppConfig.DataDirectory +"/airports/airports.dat").getLines.foreach { line => {
 //	    println(line)
@@ -35,7 +32,7 @@ class ModelTests extends FunSuite {
 	    }
  	  }
   }
-  test("Flightsload") {
+  test("Flights load") {
  	  Source.fromFile(AppConfig.DataDirectory +"/flights/xbr").getLines.foreach { line => {
 //	    println(line)
 	      val flight = Flight.flightFromString(line)

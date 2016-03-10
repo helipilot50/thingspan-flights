@@ -37,7 +37,8 @@ object TestData {
 
 	def aLotOfFlights(lowDate:String, lowTime:String, highDate:String, highTime:String) : Array[Flight] = {
 			var flights : ListBuffer[Flight] = ListBuffer[Flight]();
-	  Source.fromFile(AppConfig.DataDirectory +"/flights/xbr").getLines.foreach { line => {
+			val dataFile = AppConfig.DataDirectory +"/flights/xbr"
+	  Source.fromFile(dataFile).getLines.foreach { line => {
 //	    println(line)
 	      val flight = Flight.flightFromString(line)
 //	    println(flight)

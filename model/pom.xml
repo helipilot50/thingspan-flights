@@ -10,9 +10,8 @@
 		<maven.compiler.target>1.7</maven.compiler.target>
 		<encoding>UTF-8</encoding>
 		<scala.tools.version>2.10</scala.tools.version>
-		<scala.version>2.10.5</scala.version>
+		<scala.version>2.10.6</scala.version>
 		<spark.version>1.6.0</spark.version>
-
 	</properties>
 
 
@@ -42,14 +41,31 @@
 		<testSourceDirectory>src/test/scala</testSourceDirectory>
 		<plugins>
 			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.7</version>
 				<configuration>
-					<mainClass>com.objectivity.thingspan.examples.flights.spring.FlightsGraphService</mainClass>
-					<executable>true</executable>
+					<skipTests>true</skipTests>
 				</configuration>
 			</plugin>
-
+			<plugin>
+				<groupId>org.scalatest</groupId>
+				<artifactId>scalatest-maven-plugin</artifactId>
+				<version>1.0</version>
+				<configuration>
+					<reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+					<junitxml>.</junitxml>
+					<filereports>WDF TestSuite.txt</filereports>
+				</configuration>
+				<executions>
+					<execution>
+						<id>test</id>
+						<goals>
+							<goal>test</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<!-- see http://davidb.github.com/scala-maven-plugin -->
 				<groupId>net.alchim31.maven</groupId>
@@ -78,8 +94,6 @@
 				<configuration>
 					<useFile>false</useFile>
 					<disableXmlReport>true</disableXmlReport>
-					<!-- If you have classpath issue like NoDefClassError,... -->
-					<!-- useManifestOnlyJar>false</useManifestOnlyJar -->
 					<includes>
 						<include>**/*Test.*</include>
 						<include>**/*Suite.*</include>
@@ -95,12 +109,6 @@
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
-					<archive>
-						<manifest>
-							<addClasspath>true</addClasspath>
-							<mainClass>com.objectivity.thingspan.examples.flights.DataLoad</mainClass>
-						</manifest>
-					</archive>
 					<finalName>${project.artifactId}-${project.version}-full</finalName>
 					<appendAssemblyId>false</appendAssemblyId>
 				</configuration>
