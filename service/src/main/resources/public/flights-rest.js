@@ -1,16 +1,38 @@
-var flightData
+var flightData;
 
-$.ajax({
-	//console.log($('#Field').value)
-	url: 'http://localhost:8080/flights/201201170000/201201172359',
-	success: function(flights) {
-		flightData = flights;
-//		console.log(flightData.length)
-//		console.log(flightData[0]);
-//		console.log(flightData[1]);
-//		console.log(flightData[2]);
-//		console.log(flightData[3]);
-//		console.log(flightData[4]);
-//		console.log(flightData[5]);
+var flightsController = (function() {
+	var context = 'http://localhost:8080/flights/';
+	var getFlightData = function(fromDate, toDate) {
+		function pad(datePart, len) {
+			if (!len) {
+				len = 2;
+			}
+			if (typeof datePart !== 'string') {
+				datePart = ''+datePart;
+			}
+			var x = '0000' + datePart;
+			return x.substr(-len);
+		}
+		function dateToStr(date) {
+			if(typeof date === 'string') {
+				return date;
+			}
+			else {
+				return date.getFullYear() +
+					pad(1+date.getMonth()) + 
+					pad(date.getDate()) +
+					pad(date.getHours()) + 
+					pad(date.getMinutes());
+			}
+		}
+		var url = context + dateToStr(fromDate) + "/" +dateToStr(toDate);
+		console.log(url);
+		return $.ajax({
+			url: url
+		})
 	}
-});
+	return {
+		getFlightData: getFlightData
+	};
+})();
+

@@ -1,0 +1,14 @@
+.dateRange {
+	margin: 1em;
+	background-color: #ddd;
+	border-radius: 10px;
+}
+
+.dateRange .field {
+	margin: 0.5em;
+}
+
+.dateRange span {
+	width: 5em;
+	display: inline-block;
+}

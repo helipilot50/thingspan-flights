@@ -19,7 +19,7 @@ function linkWidth(count) {
   return Math.min(limit, result);
 }
 
-function prepareItems() {
+function prepareItems(flightData) {
   var nodeids = {};
   var links = {};
   
@@ -256,7 +256,7 @@ function klReady(err, ready) {
   timebar.bind('hover', showTooltip);
 
   // load the data into timebar and chart
-  prepareItems();
+  // prepareItems();
 
   $('#hide').click(hideToggled);
   $('#selonly').click(timebarChanged);
@@ -266,6 +266,43 @@ function klReady(err, ready) {
     $('#selonly').prop('disabled', !checked);
     $('#solab').css('color', checked ? '' : 'silver');
   });
+  
+	flightsController.getFlightData("201201170000", "201201172359")
+	.done(function(data) {
+		prepareItems(data);
+	});
+
+	function getDate(strDate, strTime) {
+		var dateParts = strDate.split("-");
+		var timeParts = strTime.split(":");
+		var result = new Date(parseInt(dateParts[0]),
+				parseInt(dateParts[1]) -1,
+				parseInt(dateParts[2]),
+				parseInt(timeParts[0]),
+				parseInt(timeParts[1]));
+		return result;
+	}
+	
+	$("#flightDates").on("click", function() {
+		console.log("dates pressed");
+		var data = $("#dateRange").serializeArray();
+		var fromDate, toDate;
+		var fields = {};
+		for (var i = 0; i < data.length; i++) {
+			fields[data[i].name] = data[i].value;
+		}
+		console.log(fields);
+		fromDate = getDate(fields.fromDate, fields.fromTime);
+		toDate = getDate(fields.toDate, fields.toTime);
+		
+		flightsController.getFlightData(fromDate, toDate)
+		.done(function(data) {
+			console.log(data);
+			prepareItems(data);
+		});
+		
+	});
+
 }
 
 function showTooltip(type, index, value, x, y, t1, t2){
@@ -325,3 +362,5 @@ $(window).load(function () {
   KeyLines.create([{id:'kl', type:'chart', options: chartOptions}, {id: 'tl', type: 'timebar'}], klReady);
 });
 
+$(document).ready(function() {
+});

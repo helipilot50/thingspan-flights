@@ -38,11 +38,9 @@ object TestData {
 	def aLotOfFlights(lowDate:String, lowTime:String, highDate:String, highTime:String) : Array[Flight] = {
 			var flights : ListBuffer[Flight] = ListBuffer[Flight]();
 			val dataFile = AppConfig.DataDirectory +"/flights/xbr"
-	  Source.fromFile(dataFile).getLines.foreach { line => {
-//	    println(line)
+	    Source.fromFile(dataFile).getLines.foreach { line => {
 	      val flight = Flight.flightFromString(line)
-//	    println(flight)
-				if (flight.flightDate >= lowDate && flight.flightDate <= highDate && flight.departureTime >= lowTime && flight.departureTime <= highTime)
+				if ((flight.flightDate >= lowDate && flight.departureTime >= lowTime) && (flight.flightDate <= highDate  && flight.departureTime <= highTime))
 					flights +=  flight
 	    }
 	  }

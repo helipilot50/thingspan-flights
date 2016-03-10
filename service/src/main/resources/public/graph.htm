@@ -5,13 +5,7 @@
     <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="css/keylines.css">
     <link rel="stylesheet" type="text/css" href="css/minimalsdk.css">
-    <script src="vendor/json2.js" type="text/javascript"></script>
-    <script src="vendor/jquery.js" type="text/javascript"></script>
-    <script src="js/keylines.js" type="text/javascript"></script>
-    <script src="js/demo.js" type="text/javascript"></script>
-    <script src="vendor/underscore.js" type="text/javascript"></script>
-    <script src="flights-rest.js" type="text/javascript"></script>
-    <script src="flights.js" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="flights.css">
   </head>
   <body>
     <div class="container">
@@ -54,11 +48,13 @@
                 <input id="selonly" type="checkbox" checked="checked">
                 <p id="solab">and show only neighbours of selection</p>
               </label>
-<!--               <fieldset> -->
-<!--     			<legend>Date range:</legend> -->
-<!--     				From: <input type="text"><br> -->
-<!--     				To: <input type="text"> -->
-<!--  			 </fieldset> -->
+              <form class="dateRange" id="dateRange">
+    			<legend>Date range:</legend>
+    				<div class="field">
+    				<span>From:</span><input name="fromDate" type="date"><input name="fromTime" type="time"></div>
+     				<div class="field"><span>To:</span><input name="toDate" type="date"><input name="toTime" type="time"></div>
+     				<input id="flightDates" type="button" value="Click Me">
+  			 </form>
             </div>
           </div>
         </div>
@@ -69,5 +65,13 @@
       <div id="moreContainer">
       </div>
     </div>
+        <script src="vendor/json2.js" type="text/javascript"></script>
+    <script src="vendor/jquery.js" type="text/javascript"></script>
+    <script src="js/keylines.js" type="text/javascript"></script>
+    <script src="js/demo.js" type="text/javascript"></script>
+    <script src="vendor/underscore.js" type="text/javascript"></script>
+    <script src="flights-rest.js" type="text/javascript"></script>
+    <script src="flights.js" type="text/javascript"></script>
+    
   </body>
 </html>
