@@ -62,9 +62,9 @@ object TestData {
 				((fl.flightDate >= lowDate && fl.departureTime >= lowTime) 
 				    && (fl.flightDate <= highDate  && fl.departureTime <= highTime))}
 			)
-		println("Flights founf: " +flightsRDD.count)
+//		println("Flights found: " +flightsRDD.count)
 	  val flightsArray = flightsRDD.collect.toArray
-	  flightsArray.take(10).foreach (println)
+//	  flightsArray.take(10).foreach (println)
 	  flightsArray
 	}
 

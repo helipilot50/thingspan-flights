@@ -43,7 +43,7 @@ class GraphController {
 			var flights: Array[Flight] = null
 
 					if (AppConfig.TestData){
-					  // Read flights from a data file
+					  // read data from file(s)
 						//flights = TestData.aLotOfFlights(lowDate, lowTime, highDate, highTime)
 						flights = TestData.scalaFlights(lowDate, lowTime, highDate, highTime)
 					} else {
@@ -104,11 +104,10 @@ class GraphController {
 												distance)
 						}
 						flights = flightsRDD.collect
-
 					}
 	val numOfFlights = flights.length
-			println(s"Flights count: $numOfFlights")
-			flights.take(5).foreach { println }
+	println(s"Flights count: $numOfFlights")
+	flights.take(5).foreach { println }
 	flights
 	}
 
