@@ -42,69 +42,70 @@ class GraphController {
 
 			var flights: Array[Flight] = null
 
-//					if (AppConfig.TestData){
+					if (AppConfig.TestData){
 					  // Read flights from a data file
-						flights = TestData.aLotOfFlights(lowDate, lowTime, highDate, highTime)
-//					} else {
-//					  // read flights from Thingspan  
-//						val flightsDF = sqlContext.read.
-//								format("com.objy.spark.sql").
-//								option("objy.bootFilePath", AppConfig.Boot).
-//								option("objy.dataClassName", "com.objectivity.thingspan.examples.flights.Flight").
-//								option("objy.addOidColumn", "flightOid").
-//								load 
-//
-//								flightsDF.registerTempTable("flightsTable")
-//
-//								val flightsQuery = s"""SELECT
-//                        | year,
-//                        | dayOfMonth,
-//                        | flightDate,
-//                        | airlineId,
-//                        | carrier,
-//                        | flightNumber,
-//                        | origin,
-//                        | destination,
-//                        | departureTime,
-//                        | arrivalTime,
-//                        | elapsedTime,
-//                        | airTime,
-//                        | distance
-//        								| FROM flightsTable
-//				        				| WHERE flightDate >= $lowDate and flightDate <= $highDate and departureTime >= $lowTime and departureTime <= $highTime"""
-//
-//								val flightForCriteria = sqlContext.sql(flightsQuery)
-//
-//								val flightsRDD = flightForCriteria.map {
-//								case Row(year: Int,
-//										dayOfMonth: Int,
-//										flightDate: String,
-//										airlineId: Int,
-//										carrier: String,
-//										flightNumber: Int,
-//										origin: String,
-//										destination: String,
-//										departureTime: String,
-//										arrivalTime: String,
-//										elapsedTime: Int,
-//										airTime: Int,
-//										distance: Int) => Flight(year,
-//												dayOfMonth,
-//												flightDate,
-//												airlineId,
-//												carrier,
-//												flightNumber,
-//												origin,
-//												destination,
-//												departureTime,
-//												arrivalTime,
-//												elapsedTime,
-//												airTime,
-//												distance)
-//						}
-//						flights = flightsRDD.collect
-//
-//					}
+						//flights = TestData.aLotOfFlights(lowDate, lowTime, highDate, highTime)
+						flights = TestData.scalaFlights(lowDate, lowTime, highDate, highTime)
+					} else {
+					  // read flights from Thingspan  
+						val flightsDF = sqlContext.read.
+								format("com.objy.spark.sql").
+								option("objy.bootFilePath", AppConfig.Boot).
+								option("objy.dataClassName", "com.objectivity.thingspan.examples.flights.Flight").
+								option("objy.addOidColumn", "flightOid").
+								load 
+
+								flightsDF.registerTempTable("flightsTable")
+
+								val flightsQuery = s"""SELECT
+                        | year,
+                        | dayOfMonth,
+                        | flightDate,
+                        | airlineId,
+                        | carrier,
+                        | flightNumber,
+                        | origin,
+                        | destination,
+                        | departureTime,
+                        | arrivalTime,
+                        | elapsedTime,
+                        | airTime,
+                        | distance
+        								| FROM flightsTable
+				        				| WHERE flightDate >= $lowDate and flightDate <= $highDate and departureTime >= $lowTime and departureTime <= $highTime"""
+
+								val flightForCriteria = sqlContext.sql(flightsQuery)
+
+								val flightsRDD = flightForCriteria.map {
+								case Row(year: Int,
+										dayOfMonth: Int,
+										flightDate: String,
+										airlineId: Int,
+										carrier: String,
+										flightNumber: Int,
+										origin: String,
+										destination: String,
+										departureTime: String,
+										arrivalTime: String,
+										elapsedTime: Int,
+										airTime: Int,
+										distance: Int) => Flight(year,
+												dayOfMonth,
+												flightDate,
+												airlineId,
+												carrier,
+												flightNumber,
+												origin,
+												destination,
+												departureTime,
+												arrivalTime,
+												elapsedTime,
+												airTime,
+												distance)
+						}
+						flights = flightsRDD.collect
+
+					}
 	val numOfFlights = flights.length
 			println(s"Flights count: $numOfFlights")
 			flights.take(5).foreach { println }

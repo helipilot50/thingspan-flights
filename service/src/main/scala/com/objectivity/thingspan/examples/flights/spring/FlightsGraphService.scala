@@ -1,22 +1,21 @@
 package com.objectivity.thingspan.examples.flights.spring
 
-import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.SpringApplication
-import org.apache.commons.cli.CommandLine
-import org.apache.commons.cli.CommandLineParser
-import org.apache.commons.cli.HelpFormatter
-import org.apache.commons.cli.Options
-import org.apache.commons.cli.ParseException
-import org.apache.commons.cli.PosixParser
 import java.io.PrintWriter
 import java.io.StringWriter
-import org.springframework.boot.context.web.SpringBootServletInitializer
-import org.springframework.boot.builder.SpringApplicationBuilder
-import org.springframework.context.annotation.Bean
-import org.apache.spark.{SparkConf, SparkContext}
-import org.apache.spark.sql.{Row, SQLContext, DataFrame}
-import org.apache.spark.sql.SaveMode
+
+import org.apache.commons.cli.CommandLine
+import org.apache.commons.cli.HelpFormatter
+import org.apache.commons.cli.Options
+import org.apache.commons.cli.PosixParser
+import org.apache.spark.SparkConf
+import org.apache.spark.SparkContext
 import org.apache.spark.sql.sources.CreatableRelationProvider
+import org.springframework.boot.SpringApplication
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.builder.SpringApplicationBuilder
+import org.springframework.boot.context.web.SpringBootServletInitializer
+import org.springframework.context.annotation.Bean
+
 import com.objectivity.thingspan.examples.flights.AppConfig
 
 

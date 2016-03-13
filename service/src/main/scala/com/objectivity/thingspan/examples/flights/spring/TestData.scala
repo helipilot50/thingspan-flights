@@ -5,9 +5,18 @@ import scala.io.Source
 import scala.util.matching.Regex
 import scala.collection.mutable.ListBuffer
 import com.objectivity.thingspan.examples.flights.AppConfig
+import org.apache.spark.{SparkConf, SparkContext}
+import org.springframework.beans.factory.annotation.Autowired
+import org.apache.catalina.core.ApplicationContext
+import scala.beans.BeanProperty
+import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Bean
+
 
 object TestData {
-
+	@Autowired val sc : SparkContext = null
+	
+	def instance() = this
 
 	// Find: ^\d+,(\d+),(\d+),(\d\d\d\d/\d\d/\d\d),(\d+),(\w\w),(\d+),\d+,(\w+?),.+?,.+?,(\w+?),.+?,.+?,(\d+),(\d+),(\d+),(\d+),(\d+)
 	// Replace: Flight($1, $2, "$3", $4, "$5", $6, "$7", "$8", "$9", "$10", "$11", "$12", $13),
@@ -47,9 +56,26 @@ object TestData {
 	  flights.toArray
 	}
 
-	def main(args: Array[String])  {
-		var flights = aLotOfFlights("2012/01/23","00:00:00", "2012/01/23","12:00:00")
-				println(flights.length)
-				flights.take(25).foreach { println }
+		def scalaFlights(lowDate:String, lowTime:String, highDate:String, highTime:String) : Array[Flight] = {
+		  val flightsCSV = sc.textFile(AppConfig.DataDirectory +"/flights") 
+			val flightsRDD = flightsCSV.map(Flight.flightFromString(_)).filter(fl => {
+				((fl.flightDate >= lowDate && fl.departureTime >= lowTime) 
+				    && (fl.flightDate <= highDate  && fl.departureTime <= highTime))}
+			)
+		println("Flights founf: " +flightsRDD.count)
+	  val flightsArray = flightsRDD.collect.toArray
+	  flightsArray.take(10).foreach (println)
+	  flightsArray
 	}
+
+@Configuration
+class CompanionsConfig {
+    @Bean def TestDataCompanion = TestData.instance
+}		
+	
+//	def main(args: Array[String])  {
+//		var flights = aLotOfFlights("2012/01/23","00:00:00", "2012/01/23","12:00:00")
+//				println(flights.length)
+//				flights.take(25).foreach { println }
+//	}
 }
