@@ -10,6 +10,10 @@ import java.text.SimpleDateFormat
 //
 //}
 
+class FlightsLoader {
+  
+}
+
 object FlightsLoader {
 	def main(args: Array[String]) = {
 

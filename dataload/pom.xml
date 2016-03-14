@@ -96,14 +96,14 @@
 		<sourceDirectory>src/main/scala</sourceDirectory>
 		<testSourceDirectory>src/test/scala</testSourceDirectory>
 		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<mainClass>com.objectivity.thingspan.examples.flights.spring.FlightsGraphService</mainClass>
-					<executable>true</executable>
-				</configuration>
-			</plugin>
+<!-- 			<plugin> -->
+<!-- 				<groupId>org.springframework.boot</groupId> -->
+<!-- 				<artifactId>spring-boot-maven-plugin</artifactId> -->
+<!-- 				<configuration> -->
+<!-- 					<mainClass>com.objectivity.thingspan.examples.flights.FlightsLoader</mainClass> -->
+<!-- 					<executable>true</executable> -->
+<!-- 				</configuration> -->
+<!-- 			</plugin> -->
 
 			<plugin>
 				<!-- see http://davidb.github.com/scala-maven-plugin -->
@@ -153,10 +153,10 @@
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
-							<mainClass>com.objectivity.thingspan.examples.flights.DataLoad</mainClass>
+							<mainClass>com.objectivity.thingspan.examples.flights.FlightsLoader</mainClass>
 						</manifest>
 					</archive>
-					<finalName>${project.artifactId}-${project.version}-full</finalName>
+					<finalName>${project.artifactId}-${project.version}</finalName>
 					<appendAssemblyId>false</appendAssemblyId>
 				</configuration>
 				<executions>
