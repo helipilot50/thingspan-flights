@@ -3,7 +3,7 @@
 ## Install Thingspan jar
 Install the tingspan jar to tat local repo - only once
 	
-	mvn deploy:deploy-file -Durl=file://repo/ -Dfile=lib/spark-rdd-1.0.0-all.jar -DgroupId=com.objectivity -DartifactId=thingspan-spark-rdd -Dpackaging=jar -Dversion=1.0.0
+	mvn deploy:deploy-file -Durl=file://repo -Dfile=lib/spark-rdd-1.0.0-all.jar -DgroupId=com.objectivity -DartifactId=thingspan-spark-rdd -Dpackaging=jar -Dversion=1.0.0
 
 ## Loading Data
 
