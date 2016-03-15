@@ -147,13 +147,6 @@
 						</goals>
 						<configuration>
 							<filters>
-<!-- 								<filter> -->
-<!-- 									<artifact>junit:junit</artifact> -->
-<!-- 									<includes> -->
-<!-- 										<include>junit/framework/**</include> -->
-<!-- 										<include>org/junit/**</include> -->
-<!-- 									</includes> -->
-<!-- 								</filter> -->
 								<filter>
 									<artifact>*:*</artifact>
 									<excludes>
