@@ -44,12 +44,12 @@
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-core_2.10</artifactId>
 			<version>${spark.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-log4j12</artifactId>
-				</exclusion>
-			</exclusions>
+<!-- 			<exclusions> -->
+<!-- 				<exclusion> -->
+<!-- 					<groupId>org.slf4j</groupId> -->
+<!-- 					<artifactId>slf4j-log4j12</artifactId> -->
+<!-- 				</exclusion> -->
+<!-- 			</exclusions> -->
 		</dependency>
 
 		<dependency>
@@ -89,6 +89,7 @@
 			<artifactId>commons-cli</artifactId>
 			<version>1.2</version>
 		</dependency>
+
 	</dependencies>
 
 
@@ -96,14 +97,14 @@
 		<sourceDirectory>src/main/scala</sourceDirectory>
 		<testSourceDirectory>src/test/scala</testSourceDirectory>
 		<plugins>
-<!-- 			<plugin> -->
-<!-- 				<groupId>org.springframework.boot</groupId> -->
-<!-- 				<artifactId>spring-boot-maven-plugin</artifactId> -->
-<!-- 				<configuration> -->
-<!-- 					<mainClass>com.objectivity.thingspan.examples.flights.FlightsLoader</mainClass> -->
-<!-- 					<executable>true</executable> -->
-<!-- 				</configuration> -->
-<!-- 			</plugin> -->
+			<!-- <plugin> -->
+			<!-- <groupId>org.springframework.boot</groupId> -->
+			<!-- <artifactId>spring-boot-maven-plugin</artifactId> -->
+			<!-- <configuration> -->
+			<!-- <mainClass>com.objectivity.thingspan.examples.flights.FlightsLoader</mainClass> -->
+			<!-- <executable>true</executable> -->
+			<!-- </configuration> -->
+			<!-- </plugin> -->
 
 			<plugin>
 				<!-- see http://davidb.github.com/scala-maven-plugin -->
