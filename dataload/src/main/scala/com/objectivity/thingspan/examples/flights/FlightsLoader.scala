@@ -106,7 +106,7 @@ object FlightsLoader {
   
   
   				println("Creating relationships between airline and flight via a JOIN")
-  				val airlineFlightJoin = """SELECT airlinesTable.airlineOid, airlinesTable.id, flightsTable.airlineId from airlinesTable inner join flightsTable ON airlinesTable.id=flightsTable.airlineId"""
+  				val airlineFlightJoin = """SELECT airlinesTable.airlineOid, airlinesTable.airlineId, flightsTable.airlineId from airlinesTable inner join flightsTable ON airlinesTable.airlineId=flightsTable.airlineId"""
   
   				val flightAirlineDF = sqlContext.sql(airlineFlightJoin)
   
@@ -120,8 +120,8 @@ object FlightsLoader {
   				save() 
   
   				println("Creating relationships between flight and airports via a JOIN")
-  				val flightOriginJoin = """SELECT flightsTable.flightOid, flightsTable.origin, flightsTable.destination, airportsTable.id from flightsTable inner join airportsTable ON flightsTable.origin=airportsTable.id"""
-  				val flightDestinationJoin = """SELECT flightsTable.flightOid, flightsTable.origin, flightsTable.destination, airportsTable.id from flightsTable inner join airportsTable ON flightsTable.destination=airportsTable.id"""
+  				val flightOriginJoin = """SELECT flightsTable.flightOid, flightsTable.origin, flightsTable.destination, airportsTable.IATA from flightsTable inner join airportsTable ON flightsTable.origin=airportsTable.IATA"""
+  				val flightDestinationJoin = """SELECT flightsTable.flightOid, flightsTable.origin, flightsTable.destination, airportsTable.IATA from flightsTable inner join airportsTable ON flightsTable.destination=airportsTable.IATA"""
   
   				val flightOriginDF = sqlContext.sql(flightOriginJoin)
   				val flightDestinationnDF = sqlContext.sql(flightDestinationJoin)

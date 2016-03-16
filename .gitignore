@@ -5,3 +5,4 @@
 .settings
 target
 .cache-tests
+model/.tmpBin
