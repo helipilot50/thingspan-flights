@@ -44,37 +44,35 @@
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-core_2.10</artifactId>
 			<version>${spark.version}</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-sql_2.10</artifactId>
 			<version>${spark.version}</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-mllib_2.10</artifactId>
 			<version>${spark.version}</version>
+			<scope>provided</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>org.apache.spark</groupId>
-			<artifactId>spark-graphx_2.10</artifactId>
-			<version>${spark.version}</version>
-		</dependency>
 
 		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-streaming_2.10</artifactId>
 			<version>${spark.version}</version>
+			<scope>provided</scope>
 		</dependency>
+		
 		<!-- Thingspan -->
 		<dependency>
 			<groupId>com.objectivity</groupId>
 			<artifactId>thingspan-spark-rdd</artifactId>
-			<!-- <scope>system</scope> -->
-			<!-- <systemPath>${project.basedir}/lib/spark-rdd-1.0.0-all.jar</systemPath> -->
 			<version>1.0.0</version>
 		</dependency>
 		<!-- Apache command line parser. -->
@@ -92,7 +90,6 @@
 		<testSourceDirectory>src/test/scala</testSourceDirectory>
 		<plugins>
 
-			<!-- see http://davidb.github.com/scala-maven-plugin -->
 			<plugin>
 				<groupId>net.alchim31.maven</groupId>
 				<artifactId>scala-maven-plugin</artifactId>

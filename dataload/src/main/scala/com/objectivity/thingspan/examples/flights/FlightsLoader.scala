@@ -9,8 +9,8 @@ import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.PosixParser
 
-//import java.io.PrintWriter
-//import java.io.StringWriter
+import java.io.PrintWriter
+import java.io.StringWriter
 
 import java.text.SimpleDateFormat
 
@@ -30,15 +30,15 @@ object FlightsLoader {
 			val parser = new PosixParser()
 			val cl = parser.parse(options, args, false)
 
-//			if (cl.hasOption("u")) {
-//				val formatter = new HelpFormatter();
-//				var sw = new StringWriter();
-//				var pw = new PrintWriter(sw);
-//				val syntax = FlightsGraphService.getClass().getName() + " [<options>]";
-//				formatter.printHelp(pw, 100, syntax, "options:", options, 0, 2, null);
-//				println(sw.toString());
-//				return;
-//			}
+//		if (cl.hasOption("u")) {
+//			val formatter = new HelpFormatter();
+//			var sw = new StringWriter();
+//			var pw = new PrintWriter(sw);
+//			val syntax = FlightsLoader.getClass().getName() + " [<options>]";
+//			formatter.printHelp(pw, 100, syntax, "options:", options, 0, 2, null);
+//			println(sw.toString());
+//			return
+//		}
 
 			if (cl.hasOption("d")){
 				val dataDirString = cl.getOptionValue("d", "data")
@@ -57,7 +57,7 @@ object FlightsLoader {
 
 			var conf = new SparkConf()
 			conf.setAppName("FlightLoader")
-			conf.setMaster("local[1]")
+			//conf.setMaster("local[1]")
 
 			// Turn off extra info for serializer exceptions (not working)
 			conf.set("spark.serializer.extraDebugInfo", "false")

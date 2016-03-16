@@ -58,21 +58,21 @@ class GraphController {
 								flightsDF.registerTempTable("flightsTable")
 
 								val flightsQuery = s"""SELECT
-                        | year,
-                        | dayOfMonth,
-                        | flightDate,
-                        | airlineId,
-                        | carrier,
-                        | flightNumber,
-                        | origin,
-                        | destination,
-                        | departureTime,
-                        | arrivalTime,
-                        | elapsedTime,
-                        | airTime,
-                        | distance
-        								| FROM flightsTable
-				        				| WHERE flightDate >= $lowDate and flightDate <= $highDate and departureTime >= $lowTime and departureTime <= $highTime"""
+ year,
+ dayOfMonth,
+ flightDate,
+ airlineId,
+ carrier,
+ flightNumber,
+ origin,
+ destination,
+ departureTime,
+ arrivalTime,
+ elapsedTime,
+ airTime,
+ distance
+ FROM flightsTable
+ WHERE (flightDate >= '$lowDate' and departureTime >= '$lowTime') and (flightDate <= '$highDate'  and departureTime <= '$highTime')"""
 
 								val flightForCriteria = sqlContext.sql(flightsQuery)
 

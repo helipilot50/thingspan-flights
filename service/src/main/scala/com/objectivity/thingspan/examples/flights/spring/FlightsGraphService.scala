@@ -34,20 +34,21 @@ object FlightsGraphService {
 	  var options = new Options();
 		options.addOption("d", "data", true, "Data directory");
 		options.addOption("t", "test", false, "Use test data");
+		options.addOption("b", "boot", true, "Boot file");
 		options.addOption("u", "usage", false, "Print usage.");
 
 		val parser = new PosixParser()
-				val cl = parser.parse(options, args, false)
+		val cl = parser.parse(options, args, false)
 
-				if (cl.hasOption("u")) {
-					val formatter = new HelpFormatter();
-					var sw = new StringWriter();
-					var pw = new PrintWriter(sw);
-					val syntax = FlightsGraphService.getClass().getName() + " [<options>]";
-					formatter.printHelp(pw, 100, syntax, "options:", options, 0, 2, null);
-					println(sw.toString());
-					return
-				}
+		if (cl.hasOption("u")) {
+			val formatter = new HelpFormatter();
+			var sw = new StringWriter();
+			var pw = new PrintWriter(sw);
+			val syntax = FlightsGraphService.getClass().getName() + " [<options>]";
+			formatter.printHelp(pw, 100, syntax, "options:", options, 0, 2, null);
+			println(sw.toString());
+			return
+		}
 
     if (cl.hasOption("d")){
 			val dataDirString = cl.getOptionValue("d", "data")
@@ -57,6 +58,12 @@ object FlightsGraphService {
     if (cl.hasOption("t"))
 		    AppConfig.TestData = true
 			SpringApplication.run(classOf[FlightsGraphService])
+			
+		if (cl.hasOption("b")){
+				val bootString = cl.getOptionValue("b", "data/flights.boot")
+						AppConfig.Boot = bootString
+		}	
+
 	}
 
 	@Bean
