@@ -216,7 +216,7 @@
 	<repositories>
 		<repository>
 			<id>local-thingspan-repo</id>
-			<url>file:///${project.parent.basedir}/repor</url>
+			<url>file:///${project.parent.basedir}/repo</url>
 		</repository>
 	</repositories>
 </project>
