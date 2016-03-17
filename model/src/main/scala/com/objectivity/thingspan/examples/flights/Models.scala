@@ -6,6 +6,9 @@ object AppConfig {
 	var Boot = "data/flights.boot"
 	var TestData = false
   var DataDirectory = "data"
+  var port = 7777
+  var host = "localhost"
+  var time = 30
 }
 
 case class Airport(
