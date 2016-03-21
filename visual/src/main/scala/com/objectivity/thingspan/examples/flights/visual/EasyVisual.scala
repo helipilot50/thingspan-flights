@@ -9,11 +9,32 @@ import org.graphstream.graph.{Graph => GraphStream}
 import org.graphstream.graph.{Graph=>GraphStream}
 import org.graphstream.graph.implementations._ 
 import org.apache.spark.rdd.RDD
+import org.apache.commons.cli.CommandLine
+import org.apache.commons.cli.HelpFormatter
+import org.apache.commons.cli.Options
+import org.apache.commons.cli.PosixParser
 
 
 object EasyVisual {
 
 	def main(args: Array[String]) = {
+			var options = new Options();
+			options.addOption("d", "data", true, "Data directory");
+			options.addOption("b", "boot", true, "Boot file");
+
+			val parser = new PosixParser()
+			val cl = parser.parse(options, args, false)
+
+
+			if (cl.hasOption("d")){
+				val dataDirString = cl.getOptionValue("d", "data")
+						AppConfig.DataDirectory = dataDirString
+			}	
+
+			if (cl.hasOption("b")){
+				val bootString = cl.getOptionValue("b", "data/flights.boot")
+						AppConfig.Boot = bootString
+			}	
 			AppConfig.TestData = true
 			AppConfig.DataDirectory = "../data"
 				var conf = new SparkConf()
