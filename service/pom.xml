@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>thingspan-flights</groupId>
 	<artifactId>thingspan-flights-service</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<name>thingspan-flights</name>
 	<properties>
 		<maven.compiler.source>1.7</maven.compiler.source>
@@ -25,7 +25,7 @@
 		<dependency>
 			<groupId>thingspan-flights</groupId>
 			<artifactId>thingspan-flights-model</artifactId>
-			<version>1.0.0</version>
+			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 		<!-- Scala and Spark dependencies -->
 		<dependency>
