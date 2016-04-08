@@ -6,7 +6,7 @@ import org.apache.spark.SparkContext
 object SparkFlightsAnalytics {
   def main(args:Array[String]) = {
   	val sc = new SparkContext(new SparkConf().setAppName("FlightAnalytics").setMaster("local[*]"))
-		val csv = sc.textFile("data")
+		val csv = sc.textFile("data/flights/csv")
 		val data = csv.map(line => line.split(",").map(elem => elem.trim))
 		val totalData = data.count()
 		val startDate = "2012/01/15"

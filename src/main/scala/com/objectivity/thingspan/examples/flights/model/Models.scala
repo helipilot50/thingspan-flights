@@ -28,7 +28,7 @@ case class Airport(
 		)
 
 object Airport {
-	def airportFromString(source: String) : Airport = {
+	def airportFromCSV(source: String): Airport = {
 
 			val p = source.split(",").map(_.trim)
 					Airport(p(0).toInt,  
@@ -60,7 +60,7 @@ case class Airline(
 )
 
 object Airline {
-	def airlineFromString(source: String) : Airline = {
+	def airlineFromCSV(source: String): Airline = {
 
 			val p = source.split(",").map(_.trim)
 			
@@ -91,7 +91,7 @@ case class Route (
 )
     
 object Route {
-	def routeFromString(source: String) : Route = {
+	def routeFromCSV(source: String): Route = {
 			val p = source.split(",").map(_.trim)
 			
 			Route(p(0),  
@@ -124,7 +124,7 @@ case class Flight (
 		)
 
 object Flight {
-	def flightFromString(source: String) : Flight = {
+	def flightFromCSV(source: String): Flight = {
 			val Pattern = """^\d+,(\d+),(\d+),(\d\d\d\d/\d\d/\d\d),(\d+),(\w\w),(\d+),\d+,(\w\w\w),.+?,.+?,(\w\w\w),.+?,.+?,(\d+),(\d+),(\d+),(\d+),(\d+)""".r
 
 					val  Pattern(year, dayOfMonth, flightDate, airlineId, carrier,

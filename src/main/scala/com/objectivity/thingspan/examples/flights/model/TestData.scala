@@ -1,12 +1,9 @@
 package com.objectivity.thingspan.examples.flights.model
 
-import com.objectivity.thingspan.examples.flights.Flight
 import scala.io.Source
 import scala.collection.mutable.ListBuffer
-import com.objectivity.thingspan.examples.flights.AppConfig
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
-import com.objectivity.thingspan.examples.flights.Airport
 
 
 object TestData {
@@ -39,9 +36,9 @@ object TestData {
 
 	def scalaFlights(sc : SparkContext, lowDate:String, lowTime:String, highDate:String, highTime:String) : RDD[Flight] = {
 			var flights : ListBuffer[Flight] = ListBuffer[Flight]();
-			val dataFile = AppConfig.DataDirectory +"/flights/xbr"
+			val dataFile = AppConfig.DataDirectory +"/flights/csv/xbr"
 	    Source.fromFile(dataFile).getLines.foreach { line => {
-	      val flight = Flight.flightFromString(line)
+	      val flight = Flight.flightFromCSV(line)
 				if ((flight.flightDate >= lowDate && flight.departureTime >= lowTime) && (flight.flightDate <= highDate  && flight.departureTime <= highTime))
 					flights +=  flight
 	    }
@@ -51,8 +48,8 @@ object TestData {
 	}
 
 		def aLotOfFlights(sc : SparkContext, lowDate:String, lowTime:String, highDate:String, highTime:String) : RDD[Flight] = {
-		  val flightsCSV = sc.textFile(AppConfig.DataDirectory +"/flights") 
-			val flightsRDD = flightsCSV.map(Flight.flightFromString(_)).filter(fl => {
+		  val flightsCSV = sc.textFile(AppConfig.DataDirectory +"/flights/csv") 
+			val flightsRDD = flightsCSV.map(Flight.flightFromCSV(_)).filter(fl => {
 				((fl.flightDate >= lowDate && fl.departureTime >= lowTime) 
 				    && (fl.flightDate <= highDate  && fl.departureTime <= highTime))}
 			)
@@ -60,8 +57,8 @@ object TestData {
 	}
 
 		def airports(sc : SparkContext, country: String) : RDD[Airport] = {
-		  val airportssCSV = sc.textFile(AppConfig.DataDirectory +"/airports") 
-			val airportssRDD = airportssCSV.map(Airport.airportFromString(_)).filter(ad => {
+		  val airportssCSV = sc.textFile(AppConfig.DataDirectory +"/airports/csv/airports.csv") 
+			val airportssRDD = airportssCSV.map(Airport.airportFromCSV(_)).filter(ad => {
 				(ad.country.equals(country))}
 			)
 	  airportssRDD

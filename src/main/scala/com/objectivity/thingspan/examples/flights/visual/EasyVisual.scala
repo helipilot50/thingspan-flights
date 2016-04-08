@@ -17,26 +17,9 @@ import com.objectivity.thingspan.examples.flights.model.AppConfig
 
 object EasyVisual {
 
-	def main(args: Array[String]) = {
-			var options = new Options();
-			options.addOption("d", "data", true, "Data directory");
-			options.addOption("b", "boot", true, "Boot file");
-
-			val parser = new PosixParser()
-			val cl = parser.parse(options, args, false)
-
-
-			if (cl.hasOption("d")){
-				val dataDirString = cl.getOptionValue("d", "data")
-						AppConfig.DataDirectory = dataDirString
-			}	
-
-			if (cl.hasOption("b")){
-				val bootString = cl.getOptionValue("b", "data/flights.boot")
-						AppConfig.Boot = bootString
-			}	
+	def show() = {
 			AppConfig.TestData = true
-			AppConfig.DataDirectory = "../data"
+			//AppConfig.DataDirectory = "../data"
 				var conf = new SparkConf()
 				conf.setAppName("EasyVisual")
 				conf.set("spark.serializer.extraDebugInfo", "false")

@@ -1,14 +1,18 @@
 package com.objectivity.thingspan.examples.flights.dataload
 
-import org.apache.spark.{SparkConf, SparkContext}
-import org.apache.spark.sql.SQLContext
-import org.apache.spark.sql.SaveMode
+import scala.reflect.runtime.universe
+
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.PosixParser
-import scala.reflect.runtime.universe
-import com.objectivity.thingspan.examples.flights.model.Airline
-import com.objectivity.thingspan.examples.flights.model.Airport
+import org.apache.spark.SparkConf
+import org.apache.spark.SparkContext
+import org.apache.spark.sql.SQLContext
+import org.apache.spark.sql.SaveMode
+
+
 import com.objectivity.thingspan.examples.flights.model.AppConfig
+import com.objectivity.thingspan.examples.flights.model.Airport
+import com.objectivity.thingspan.examples.flights.model.Airline
 import com.objectivity.thingspan.examples.flights.model.Route
 
 
@@ -17,31 +21,8 @@ class ReferenceData{
 }
 
 object ReferenceData {
- 	def main(args: Array[String]) = {
-			var options = new Options();
-			options.addOption("d", "data", true, "Data directory");
-			options.addOption("b", "boot", true, "Boot file");
-			options.addOption("u", "usage", false, "Print usage.");
-
-			val parser = new PosixParser()
-			val cl = parser.parse(options, args, false)
-
-
-			if (cl.hasOption("d")){
-				val dataDirString = cl.getOptionValue("d", "data")
-						AppConfig.DataDirectory = dataDirString
-			}	
-
-			if (cl.hasOption("b")){
-				val bootString = cl.getOptionValue("b", "data/flights.boot")
-						AppConfig.Boot = bootString
-			}	
-
+ 	def load()  {
 			
-			val bootFile: String = AppConfig.Boot // Bootfile for federated database
-
-			
-
 			var conf = new SparkConf()
 			conf.setAppName("ReferenceDataLoader")
 			
@@ -57,54 +38,54 @@ object ReferenceData {
 			  println("Loading reference data ...")
  
   			var start = java.lang.System.currentTimeMillis()
-   			val airportsCSV = sc.textFile(AppConfig.DataDirectory +"/airports")
-  			val airportsRDD = airportsCSV.map(Airport.airportFromString(_))
+   			val airportsCSV = sc.textFile(AppConfig.DataDirectory +"/airports/csv")
+  			val airportsRDD = airportsCSV.map(Airport.airportFromCSV(_))
   
-  			val airlinesCSV = sc.textFile(AppConfig.DataDirectory +"/airlines")
-  			val airlinesRDD = airlinesCSV.map(Airline.airlineFromString(_))
+  			val airlinesCSV = sc.textFile(AppConfig.DataDirectory +"/airlines/csv")
+  			val airlinesRDD = airlinesCSV.map(Airline.airlineFromCSV(_))
   
-  			val routesCSV = sc.textFile(AppConfig.DataDirectory +"/routes")
-  			val routesRDD = routesCSV.map(Route.routeFromString(_))
+  			val routesCSV = sc.textFile(AppConfig.DataDirectory +"/routes/csv")
+  			val routesRDD = routesCSV.map(Route.routeFromCSV(_))
   			
-  			val airportsCount = airportsRDD.count
-  			val airlinesCount = airlinesRDD.count
-  			val routesCount = routesRDD.count
- 
   			var airportsDF = sqlContext.createDataFrame(airportsRDD)
+   			val airportsCount = airportsDF.count
   			println(s"Airports: $airportsCount")
   			println("Airports schema:")
   			airportsDF.printSchema()
-  
+  			
   			var airlinesDF = sqlContext.createDataFrame(airlinesRDD)
+  			val airlinesCount = airlinesDF.count
   			println(s"Airlines: $airlinesCount")
   			println("Airlines schema:")
   			airlinesDF.printSchema()
   
   			var routesDF = sqlContext.createDataFrame(routesRDD)
-  			println(s"Routes: $routesCount")
+  			val routesCount = routesDF.count
+ 			  println(s"Routes: $routesCount")
   			println("Routes schema:")
   			routesDF.printSchema()
   			
   			airlinesDF.write.mode(SaveMode.Overwrite).
   			format("com.objy.spark.sql").
-  			option("objy.bootFilePath", bootFile).
+  			option("objy.bootFilePath", AppConfig.Boot).
   			option("objy.dataClassName", "com.objectivity.thingspan.examples.flights.Airline").
   			save()
   
   			airportsDF.write.mode(SaveMode.Overwrite).
   			format("com.objy.spark.sql").
-  			option("objy.bootFilePath", bootFile).
+  			option("objy.bootFilePath", AppConfig.Boot).
   			option("objy.dataClassName", "com.objectivity.thingspan.examples.flights.Airport").
   			save()
   
   			routesDF.write.mode(SaveMode.Overwrite).
   			format("com.objy.spark.sql").
-  			option("objy.bootFilePath", bootFile).
-  			option("objy.dataClassName", "com.objectivity.thingspan.examples.flights.Routes").
+  			option("objy.bootFilePath", AppConfig.Boot).
+  			option("objy.dataClassName", "com.objectivity.thingspan.examples.flights.Route").
   			save()
   			
    			var stop = java.lang.System.currentTimeMillis()
-  			println("Time to ingest Airlines/Airports/Routes" + (airlinesCount+airportsCount+routesCount) + " items is: " + (stop-start) + " ms")
+
+       println("Time to ingest Airlines/Airports/Routes" + (airlinesCount+airportsCount+routesCount) + " items is: " + (stop-start) + " ms")
  
 			sc.stop
 	}

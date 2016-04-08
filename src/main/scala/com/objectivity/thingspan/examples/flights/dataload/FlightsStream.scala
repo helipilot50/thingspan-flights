@@ -61,10 +61,10 @@ object FlightsStream {
 		import sqlContext.implicits._
 
 		val streamingContext = new StreamingContext(sc, Seconds(AppConfig.time))
+		
+		val flightsCSVDStream = streamingContext.textFileStream("file://"+ AppConfig.DataDirectory +"/flights/csv")
 
-		val flightsCSVDStream = streamingContext.textFileStream("file://"+ AppConfig.DataDirectory +"/flights")
-
-		val flightsDStream = flightsCSVDStream.map(Flight.flightFromString(_))
+		val flightsDStream = flightsCSVDStream.map(Flight.flightFromCSV(_))
 		
 		val windowDStream = flightsDStream.window(Seconds(AppConfig.time), Seconds(AppConfig.time * 2))
 

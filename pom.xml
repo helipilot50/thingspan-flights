@@ -1,13 +1,12 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>thingspan-flights</groupId>
-  <artifactId>thingspan-flights-parent</artifactId>
-  <name>thingspan-flights-parent</name>
-  <version>1.0.0-SNAPSHOT</version>
-  <packaging>jar</packaging>
-  
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>thingspan-flights</groupId>
+	<artifactId>thingspan-flights</artifactId>
+	<name>thingspan-flights</name>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
 	<properties>
 		<maven.compiler.source>1.7</maven.compiler.source>
 		<maven.compiler.target>1.7</maven.compiler.target>
@@ -20,11 +19,6 @@
 
 
 	<dependencies>
-		<dependency>
-			<groupId>thingspan-flights</groupId>
-			<artifactId>thingspan-flights-model</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
-		</dependency>
 		<!-- Scala and Spark dependencies -->
 		<dependency>
 			<groupId>org.scala-lang</groupId>
@@ -71,7 +65,7 @@
 			<version>${spark.version}</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<!-- Thingspan -->
 		<dependency>
 			<groupId>com.objectivity</groupId>
@@ -111,6 +105,12 @@
 			<version>0.12</version>
 		</dependency>
 
+		<!-- Scala Test -->
+		<dependency>
+			<groupId>org.scalatest</groupId>
+			<artifactId>scalatest_2.10</artifactId>
+			<version>3.0.0-M15</version>
+		</dependency>
 	</dependencies>
 
 
@@ -118,6 +118,25 @@
 		<sourceDirectory>src/main/scala</sourceDirectory>
 		<testSourceDirectory>src/test/scala</testSourceDirectory>
 		<plugins>
+		
+<!-- 			<plugin> -->
+<!-- 				<groupId>org.scalatest</groupId> -->
+<!-- 				<artifactId>scalatest-maven-plugin</artifactId> -->
+<!-- 				<version>1.0</version> -->
+<!-- 				<configuration> -->
+<!-- 					<reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory> -->
+<!-- 					<junitxml>.</junitxml> -->
+<!-- 					<filereports>Flights TestSuite.txt</filereports> -->
+<!-- 				</configuration> -->
+<!-- 				<executions> -->
+<!-- 					<execution> -->
+<!-- 						<id>test</id> -->
+<!-- 						<goals> -->
+<!-- 							<goal>test</goal> -->
+<!-- 						</goals> -->
+<!-- 					</execution> -->
+<!-- 				</executions> -->
+<!-- 			</plugin> -->
 
 			<plugin>
 				<groupId>net.alchim31.maven</groupId>
@@ -183,7 +202,7 @@
 								</transformer>
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>com.objectivity.thingspan.examples.flights.FlightsLoader</mainClass>
+									<mainClass>com.objectivity.thingspan.examples.flights.MainEntry</mainClass>
 								</transformer>
 							</transformers>
 
