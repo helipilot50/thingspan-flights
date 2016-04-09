@@ -47,7 +47,7 @@ object TestData {
 
 	}
 
-		def aLotOfFlights(sc : SparkContext, lowDate:String, lowTime:String, highDate:String, highTime:String) : RDD[Flight] = {
+	def aLotOfFlights(sc : SparkContext, lowDate:String, lowTime:String, highDate:String, highTime:String) : RDD[Flight] = {
 		  val flightsCSV = sc.textFile(AppConfig.DataDirectory +"/flights/csv") 
 			val flightsRDD = flightsCSV.map(Flight.flightFromCSV(_)).filter(fl => {
 				((fl.flightDate >= lowDate && fl.departureTime >= lowTime) 
@@ -55,8 +55,43 @@ object TestData {
 			)
 	  flightsRDD
 	}
+	def aLotOfFlightsFrom(sc : SparkContext, from:String, lowDate:String, lowTime:String, highDate:String, highTime:String) : RDD[Flight] = {
+		  val flightsCSV = sc.textFile(AppConfig.DataDirectory +"/flights/csv") 
+			val flightsRDD = flightsCSV.map(Flight.flightFromCSV(_)).filter(fl => {
+			   (fl.origin.equalsIgnoreCase(from)
+				  && (fl.flightDate >= lowDate && fl.departureTime >= lowTime) 
+				  && (fl.flightDate <= highDate  && fl.departureTime <= highTime)
+				  )}
+			)
+	  flightsRDD
+	}
 
-		def airports(sc : SparkContext, country: String) : RDD[Airport] = {
+	def aLotOfFlightsTo(sc : SparkContext, to:String, lowDate:String, lowTime:String, highDate:String, highTime:String) : RDD[Flight] = {
+		  val flightsCSV = sc.textFile(AppConfig.DataDirectory +"/flights/csv") 
+			val flightsRDD = flightsCSV.map(Flight.flightFromCSV(_)).filter(fl => {
+			   (fl.destination.equalsIgnoreCase(to)
+				  && (fl.flightDate >= lowDate && fl.departureTime >= lowTime) 
+				  && (fl.flightDate <= highDate  && fl.departureTime <= highTime)
+				  )}
+			)
+	  flightsRDD
+	}
+
+	def aLotOfFlightsBween(sc : SparkContext, from:String, to:String, lowDate:String, lowTime:String, highDate:String, highTime:String) : RDD[Flight] = {
+		  val flightsCSV = sc.textFile(AppConfig.DataDirectory +"/flights/csv") 
+			val flightsRDD = flightsCSV.map(Flight.flightFromCSV(_)).filter(fl => {
+			   (((fl.origin.equalsIgnoreCase(from)
+			    && fl.destination.equalsIgnoreCase(to)) 
+			    || (fl.origin.equalsIgnoreCase(to)
+			    && fl.destination.equalsIgnoreCase(from)))
+				  && (fl.flightDate >= lowDate && fl.departureTime >= lowTime) 
+				  && (fl.flightDate <= highDate  && fl.departureTime <= highTime)
+				  )}
+			)
+	  flightsRDD
+	}
+
+	def airports(sc : SparkContext, country: String) : RDD[Airport] = {
 		  val airportssCSV = sc.textFile(AppConfig.DataDirectory +"/airports/csv/airports.csv") 
 			val airportssRDD = airportssCSV.map(Airport.airportFromCSV(_)).filter(ad => {
 				(ad.country.equals(country))}
