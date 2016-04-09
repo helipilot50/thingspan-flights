@@ -28,6 +28,23 @@ case class Airport(
 		)
 
 object Airport {
+  def enptyAirport(): Airport = {
+					Airport(0,  
+							null,       
+							null,       
+							null,       
+							null,       
+							null,       
+							0.0,       
+							0.0,       
+							0,
+							0.0,       
+							null,
+							null
+							)
+      
+  }
+  
 	def airportFromCSV(source: String): Airport = {
 
 			val p = source.split(",").map(_.trim)

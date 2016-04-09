@@ -13,6 +13,8 @@ import com.objectivity.thingspan.examples.flights.model.TestData
 import com.objectivity.thingspan.examples.flights.model.Flight
 import com.objectivity.thingspan.examples.flights.model.Airport
 import com.objectivity.thingspan.examples.flights.model.AppConfig
+import org.graphstream.graph.IdAlreadyInUseException
+import org.graphstream.graph.ElementNotFoundException
 
 
 object EasyVisual {
@@ -29,54 +31,64 @@ object EasyVisual {
 			import sqlContext.implicits._
 
 			var vis = new EasyVisual(sc, sqlContext);
-
-			val graph = new SingleGraph("Flights")
+ 
+			val graph = new MultiGraph("Flights")
 			graph.addAttribute("ui.stylesheet","url(file:.//style/stylesheet)") 
 			graph.addAttribute("ui.quality") 
 			graph.addAttribute("ui.antialias")
-			graph.setStrict(false)
-			graph.setAutoCreate(true)
+			//graph.setStrict(false)
+			//graph.setAutoCreate(true)
 
-			val airports = vis.listAirports("United States")
-			val airportsCount = airports.count
-			airports.collect.foreach { airport => 
-				  val node = graph.addNode(airport.IATA).asInstanceOf[SingleNode] 
-				  node.addAttribute("name", airport.IATA)
-				  node.addAttribute("ui.label", airport.IATA)
+			val airportsRef = vis.listAirports("United States").map(ap => (ap.IATA, ap))
+//			val airportsRefCount = airportsRef.count
+			
+			val flights = vis.listFlights("201201230800", "201201230900")
+//			val flightsCount = flights.count()
+
+			val airports = flights.flatMap( f => Seq(f.origin, f.destination) ).map ( ad => (ad, 1)).reduceByKey((x,y) => x + y)
+//			val airportsCount = airports.count
+			val graphAirports = airports.join(airportsRef)
+			val graphAirportsCount = graphAirports.count
+			
+//			val apList = airports.take(5)
+//			val apRefList = airportsRef.take(5)
+//			val apGraphList = graphAirports.take(5)
+//			println(airportsCount)
+//			apList.foreach(println)
+//			println(airportsRefCount)
+//			apRefList.foreach(println)
+//			println(graphAirportsCount)
+//			apGraphList.foreach(println)
+
+			graphAirports.values.collect.foreach { ap => 
+			  try{
+				  val node = graph.addNode(ap._2.IATA).asInstanceOf[MultiNode] 
+				  node.addAttribute("name", ap._2.IATA)
+				  node.addAttribute("ui.label", ap._2.IATA)
 				  node.addAttribute("ui.color", 1: java.lang.Double)
+			  } catch {
+			    case e: IdAlreadyInUseException => {}
+			  }
 			    }
 			
-			val flights = vis.listFlights("201201230000", "201201240900")
-			val flightsCount = flights.count()
-
-			println(s"Airports count: $airportsCount")
-			println(s"Flights count: $flightsCount")
+			
 			
 			flights.collect.foreach { flight =>
 			  val fn = flight.carrier + flight.flightNumber
+			  try {
 				val edge = graph.addEdge(flight.flightDate + flight.origin+fn, flight.origin, flight.destination, 
 						true).
 						asInstanceOf[AbstractEdge] 
 				
-//				edge.addAttribute("name", fn)
-//				edge.addAttribute("ui.label", fn)
-//				edge.addAttribute("ui.color", 0: java.lang.Double)
-			}
-
-			println("before count: " + graph.getNodeCount())
-			
-			var it = graph.getEachNode().iterator()
-			while (it.hasNext()){
-			  var node = it.next().asInstanceOf[Node]
-			  val degree = node.getDegree()
-			 // println(degree)
-			  if (node.getDegree() == 0 ){
-			    graph.removeNode(node.getId)
+				edge.addAttribute("name", fn)
+				edge.addAttribute("ui.label", fn)
+				edge.addAttribute("ui.color", 0: java.lang.Double)
+				} catch {
+			    case e: ElementNotFoundException => {}
+			    case ex: IdAlreadyInUseException => {}
 			  }
 			}
 
-			println("after count: " + graph.getNodeCount())
-			
 			graph.display()
 			sc.stop
 	}

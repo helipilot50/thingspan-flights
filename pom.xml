@@ -41,21 +41,21 @@
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-core_2.10</artifactId>
 			<version>${spark.version}</version>
-			<scope>provided</scope>
+<!-- 			<scope>provided</scope> -->
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-sql_2.10</artifactId>
 			<version>${spark.version}</version>
-			<scope>provided</scope>
+<!-- 			<scope>provided</scope> -->
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-mllib_2.10</artifactId>
 			<version>${spark.version}</version>
-			<scope>provided</scope>
+<!-- 			<scope>provided</scope> -->
 		</dependency>
 
 
@@ -63,7 +63,7 @@
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-streaming_2.10</artifactId>
 			<version>${spark.version}</version>
-			<scope>provided</scope>
+<!-- 			<scope>provided</scope> -->
 		</dependency>
 
 		<!-- Thingspan -->
@@ -196,13 +196,15 @@
 								</filter>
 							</filters>
 							<transformers>
-								<transformer
-									implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
-									<resource>reference.conf</resource>
-								</transformer>
+<!-- 								<transformer -->
+<!-- 									implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer"> -->
+<!-- 									<resource>reference.conf</resource> -->
+<!-- 								</transformer> -->
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 									<mainClass>com.objectivity.thingspan.examples.flights.MainEntry</mainClass>
+<!-- 				                    <X-Compile-Source-JDK>${maven.compiler.source}</X-Compile-Source-JDK> -->
+<!-- 				                    <X-Compile-Target-JDK>${maven.compiler.target}</X-Compile-Target-JDK> -->
 								</transformer>
 							</transformers>
 
