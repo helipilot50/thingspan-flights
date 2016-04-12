@@ -15,68 +15,50 @@ import org.graphstream.graph.implementations._
 import org.graphstream.graph.Node
 import org.graphstream.graph.IdAlreadyInUseException
 import org.graphstream.graph.ElementNotFoundException
+import org.apache.spark.api.java.JavaRDD
 
 
 object EasyVisual {
 
 	def show() = {
-			AppConfig.TestData = true
 			var conf = new SparkConf()
-			conf.setAppName("EasyVisual")
-			conf.set("spark.serializer.extraDebugInfo", "false")
-			conf.setMaster("local")
-			val sc = new SparkContext(conf)
-			val sqlContext = new SQLContext(sc);
+					conf.setAppName("EasyVisual")
+					conf.set("spark.serializer.extraDebugInfo", "false")
+					conf.setMaster("local")
+					val sc = new SparkContext(conf)
+					val sqlContext = new SQLContext(sc);
 			import sqlContext.implicits._
 
 			var vis = new EasyVisual(sc, sqlContext);
 
-			val graph = new MultiGraph("Flights")
-					graph.addAttribute("ui.stylesheet","url(file:.//style/stylesheet)") 
-					graph.addAttribute("ui.quality") 
-					graph.addAttribute("ui.antialias")
-					
-					// Display window
-					GraphQueryWindow.show(graph)
 
-					val airportsRef = vis.listAirports("United States").map(ap => (ap.IATA, ap))
+			// Display window
+			GraphQueryWindow.show(vis)
 
-					//val fltAD = vis.listFlightsBetweenTimes("201201230850", "201201230851")
-					//val fltAD = vis.listFlightsFrom("DEN", "201201230800", "201201230900")
-					//val fltAD = vis.listFlightsTo("DEN", "201201230800", "201201230900")
-					val fltAD = vis.listFlightsBetween("DEN", "SFO", "201201230000", "201201232359")
+			//val airportsRef = vis.listAirports("United States").map(ap => (ap.IATA, ap))
 
-					fltAD._2.values.collect.foreach { ap => 
-					try{
-						val node = graph.addNode(ap._2.IATA).asInstanceOf[MultiNode] 
-								node.addAttribute("name", ap._2.IATA)
-								node.addAttribute("ui.label", ap._2.IATA)
-								node.addAttribute("ui.color", 1: java.lang.Double)
-								val x:java.lang.Integer = (ap._2.longitude * 10000).toInt
-								val y:java.lang.Integer = (ap._2.latitude * 10000).toInt
-								node.setAttribute("xyz", x, y, 0: java.lang.Integer)
-					} catch {
-					  case e: IdAlreadyInUseException => {}
-					}
-			}
+			//val fltAD = vis.listFlightsBetween("201201230850", "201201230851")
+			//val fltAD = vis.listFlightsFrom("DEN", "201201230800", "201201230900")
+			//val fltAD = vis.listFlightsTo("DEN", "201201230800", "201201230900")
+			//val fltAD = vis.listFlightsBetween("DEN", "SFO", "201201230000", "201201232359")
 
-			fltAD._1.collect.foreach { flight =>
-			val fn = flight.carrier + flight.flightNumber
-			try {
-				val edge = graph.addEdge(flight.flightDate + flight.origin+fn, flight.origin, flight.destination, 
-						true).
-						asInstanceOf[AbstractEdge] 
 
-								edge.addAttribute("name", fn)
-								edge.addAttribute("ui.label", fn)
-								edge.addAttribute("ui.color", 0: java.lang.Double)
-			} catch {
-			  case e: ElementNotFoundException => {}
-			  case ex: IdAlreadyInUseException => {}
-			}
-		}
+			//			fltAD._1.collect.foreach { flight =>
+			//			val fn = flight.carrier + flight.flightNumber
+			//			try {
+			//				val edge = graph.addEdge(flight.flightDate + flight.origin+fn, flight.origin, flight.destination, 
+			//						true).
+			//						asInstanceOf[AbstractEdge] 
+			//
+			//								edge.addAttribute("name", fn)
+			//								edge.addAttribute("ui.label", fn)
+			//								edge.addAttribute("ui.color", 0: java.lang.Double)
+			//			} catch {
+			//			  case e: ElementNotFoundException => {}
+			//			  case ex: IdAlreadyInUseException => {}
+			//			}
+			//		}
 
-		sc.stop
 	}
 
 }
@@ -84,6 +66,24 @@ object EasyVisual {
 
 class EasyVisual(sc : SparkContext, sqlContext : SQLContext) {
 
+	def nodeEdgesFor(from:String, to:String, lowDateTime : String, highDateTime : String) : (JavaRDD[Flight], JavaRDD[Airport]) = {
+		var fltAD: (RDD[Flight], RDD[(String, (Int, Airport))]) = null
+		
+				if (from != null && !from.isEmpty() && (to == null || to.isEmpty())){
+					fltAD = listFlightsFrom(from, lowDateTime, highDateTime)
+				} else if ((from == null || from.isEmpty()) && (to != null && !to.isEmpty())){
+					fltAD = listFlightsTo(to, lowDateTime, highDateTime)
+				} else if ((from == null || from.isEmpty()) && (to == null || to.isEmpty())){
+					fltAD = listFlightsBetweenTimes(lowDateTime, highDateTime)
+				} else if ((from != null && !from.isEmpty()) && (to != null && !to.isEmpty())){
+					fltAD = listFlightsBetween(from, to, lowDateTime, highDateTime)
+				} 
+
+    			val airports = fltAD._2.values.map(x => x._2)
+    			val flights = fltAD._1
+
+    (flights.toJavaRDD(), airports.toJavaRDD())
+	}
 
 	def listAirports(country: String) = {
 			var airports: RDD[Airport] = null
@@ -150,143 +150,143 @@ class EasyVisual(sc : SparkContext, sqlContext : SQLContext) {
 
 	def listFlightsFrom(from:String, lowDateTime : String, highDateTime : String): (RDD[Flight], RDD[(String, (Int, Airport))]) = {
 
-	  	val lowDate = Flight.formatDate(lowDateTime.substring(0,8))
-			val lowTime = Flight.padTime(lowDateTime.substring(8))
-			val highDate = Flight.formatDate(highDateTime.substring(0,8))
-			val highTime = Flight.padTime(highDateTime.substring(8))
+			val lowDate = Flight.formatDate(lowDateTime.substring(0,8))
+					val lowTime = Flight.padTime(lowDateTime.substring(8))
+					val highDate = Flight.formatDate(highDateTime.substring(0,8))
+					val highTime = Flight.padTime(highDateTime.substring(8))
 
-			if (AppConfig.TestData){
-				val flights = TestData.aLotOfFlightsFrom(sc, from, lowDate, lowTime, highDate, highTime)
-				return (flights, graphAirports(flights))
-			} else {
-			  val flightsQuery = s"""SELECT
-						year,
-						dayOfMonth,
-						flightDate,
-						airlineId,
-						carrier,
-						flightNumber,
-						origin,
-						destination,
-						departureTime,
-						arrivalTime,
-						elapsedTime,
-						airTime,
-						distance
-						FROM flightsTable
-						WHERE (origin = '$from') and (flightDate >= '$lowDate' and departureTime >= '$lowTime') and (flightDate <= '$highDate'  and departureTime <= '$highTime')"""
+					if (AppConfig.TestData){
+						val flights = TestData.aLotOfFlightsFrom(sc, from, lowDate, lowTime, highDate, highTime)
+								return (flights, graphAirports(flights))
+					} else {
+						val flightsQuery = s"""SELECT
+								year,
+								dayOfMonth,
+								flightDate,
+								airlineId,
+								carrier,
+								flightNumber,
+								origin,
+								destination,
+								departureTime,
+								arrivalTime,
+								elapsedTime,
+								airTime,
+								distance
+								FROM flightsTable
+								WHERE (origin = '$from') and (flightDate >= '$lowDate' and departureTime >= '$lowTime') and (flightDate <= '$highDate'  and departureTime <= '$highTime')"""
 
-			  return listFlights(flightsQuery)
-			}
+								return listFlights(flightsQuery)
+					}
 	}
 
 	def listFlightsTo(to:String, lowDateTime : String, highDateTime : String): (RDD[Flight], RDD[(String, (Int, Airport))]) = {
 
-	  	val lowDate = Flight.formatDate(lowDateTime.substring(0,8))
-			val lowTime = Flight.padTime(lowDateTime.substring(8))
-			val highDate = Flight.formatDate(highDateTime.substring(0,8))
-			val highTime = Flight.padTime(highDateTime.substring(8))
+			val lowDate = Flight.formatDate(lowDateTime.substring(0,8))
+					val lowTime = Flight.padTime(lowDateTime.substring(8))
+					val highDate = Flight.formatDate(highDateTime.substring(0,8))
+					val highTime = Flight.padTime(highDateTime.substring(8))
 
-			if (AppConfig.TestData){
-				val flights = TestData.aLotOfFlightsTo(sc, to, lowDate, lowTime, highDate, highTime)
-				return (flights, graphAirports(flights))
-			} else {
-			  val flightsQuery = s"""SELECT
-						year,
-						dayOfMonth,
-						flightDate,
-						airlineId,
-						carrier,
-						flightNumber,
-						origin,
-						destination,
-						departureTime,
-						arrivalTime,
-						elapsedTime,
-						airTime,
-						distance
-						FROM flightsTable
-						WHERE (destination = '$to') and (flightDate >= '$lowDate' and departureTime >= '$lowTime') and (flightDate <= '$highDate'  and departureTime <= '$highTime')"""
+					if (AppConfig.TestData){
+						val flights = TestData.aLotOfFlightsTo(sc, to, lowDate, lowTime, highDate, highTime)
+								return (flights, graphAirports(flights))
+					} else {
+						val flightsQuery = s"""SELECT
+								year,
+								dayOfMonth,
+								flightDate,
+								airlineId,
+								carrier,
+								flightNumber,
+								origin,
+								destination,
+								departureTime,
+								arrivalTime,
+								elapsedTime,
+								airTime,
+								distance
+								FROM flightsTable
+								WHERE (destination = '$to') and (flightDate >= '$lowDate' and departureTime >= '$lowTime') and (flightDate <= '$highDate'  and departureTime <= '$highTime')"""
 
-			  return listFlights(flightsQuery)
-			}
+								return listFlights(flightsQuery)
+					}
 	}
 
 	def listFlightsBetween(from:String, to:String, lowDateTime : String, highDateTime : String): (RDD[Flight], RDD[(String, (Int, Airport))]) = {
 
-	  	val lowDate = Flight.formatDate(lowDateTime.substring(0,8))
-			val lowTime = Flight.padTime(lowDateTime.substring(8))
-			val highDate = Flight.formatDate(highDateTime.substring(0,8))
-			val highTime = Flight.padTime(highDateTime.substring(8))
+			val lowDate = Flight.formatDate(lowDateTime.substring(0,8))
+					val lowTime = Flight.padTime(lowDateTime.substring(8))
+					val highDate = Flight.formatDate(highDateTime.substring(0,8))
+					val highTime = Flight.padTime(highDateTime.substring(8))
 
-			if (AppConfig.TestData){
-				val flights = TestData.aLotOfFlightsBween(sc, from, to, lowDate, lowTime, highDate, highTime)
-				return (flights, graphAirports(flights))
-			} else {
-			  val flightsQuery = s"""SELECT
-						year,
-						dayOfMonth,
-						flightDate,
-						airlineId,
-						carrier,
-						flightNumber,
-						origin,
-						destination,
-						departureTime,
-						arrivalTime,
-						elapsedTime,
-						airTime,
-						distance
-						FROM flightsTable
-						WHERE (from = '$from') and (destination = '$to') and (flightDate >= '$lowDate' and departureTime >= '$lowTime') and (flightDate <= '$highDate'  and departureTime <= '$highTime')"""
+					if (AppConfig.TestData){
+						val flights = TestData.aLotOfFlightsBween(sc, from, to, lowDate, lowTime, highDate, highTime)
+								return (flights, graphAirports(flights))
+					} else {
+						val flightsQuery = s"""SELECT
+								year,
+								dayOfMonth,
+								flightDate,
+								airlineId,
+								carrier,
+								flightNumber,
+								origin,
+								destination,
+								departureTime,
+								arrivalTime,
+								elapsedTime,
+								airTime,
+								distance
+								FROM flightsTable
+								WHERE (from = '$from') and (destination = '$to') and (flightDate >= '$lowDate' and departureTime >= '$lowTime') and (flightDate <= '$highDate'  and departureTime <= '$highTime')"""
 
-			  return listFlights(flightsQuery)
-			}
+								return listFlights(flightsQuery)
+					}
 	}
-	
+
 	def listFlightsBetweenTimes(lowDateTime : String, highDateTime : String): (RDD[Flight], RDD[(String, (Int, Airport))]) = {
 
 			val lowDate = Flight.formatDate(lowDateTime.substring(0,8))
-			val lowTime = Flight.padTime(lowDateTime.substring(8))
-			val highDate = Flight.formatDate(highDateTime.substring(0,8))
-			val highTime = Flight.padTime(highDateTime.substring(8))
+					val lowTime = Flight.padTime(lowDateTime.substring(8))
+					val highDate = Flight.formatDate(highDateTime.substring(0,8))
+					val highTime = Flight.padTime(highDateTime.substring(8))
 
 
-			if (AppConfig.TestData){
-				val flights = TestData.aLotOfFlights(sc, lowDate, lowTime, highDate, highTime)
-				return (flights, graphAirports(flights))
-			} else {
-				// read flights from Thingspan  
-				val flightsDF = sqlContext.read.
-						format("com.objy.spark.sql").
-						option("objy.bootFilePath", AppConfig.Boot).
-						option("objy.dataClassName", "com.objectivity.thingspan.examples.flights.Flight").
-						option("objy.addOidColumn", "flightOid").
-						load 
+					if (AppConfig.TestData){
+						val flights = TestData.aLotOfFlights(sc, lowDate, lowTime, highDate, highTime)
+								return (flights, graphAirports(flights))
+					} else {
+						// read flights from Thingspan  
+						val flightsDF = sqlContext.read.
+								format("com.objy.spark.sql").
+								option("objy.bootFilePath", AppConfig.Boot).
+								option("objy.dataClassName", "com.objectivity.thingspan.examples.flights.Flight").
+								option("objy.addOidColumn", "flightOid").
+								load 
 
-						flightsDF.registerTempTable("flightsTable")
+								flightsDF.registerTempTable("flightsTable")
 
-						val flightsQuery = s"""SELECT
-						year,
-						dayOfMonth,
-						flightDate,
-						airlineId,
-						carrier,
-						flightNumber,
-						origin,
-						destination,
-						departureTime,
-						arrivalTime,
-						elapsedTime,
-						airTime,
-						distance
-						FROM flightsTable
-						WHERE (flightDate >= '$lowDate' and departureTime >= '$lowTime') and (flightDate <= '$highDate'  and departureTime <= '$highTime')"""
+								val flightsQuery = s"""SELECT
+								year,
+								dayOfMonth,
+								flightDate,
+								airlineId,
+								carrier,
+								flightNumber,
+								origin,
+								destination,
+								departureTime,
+								arrivalTime,
+								elapsedTime,
+								airTime,
+								distance
+								FROM flightsTable
+								WHERE (flightDate >= '$lowDate' and departureTime >= '$lowTime') and (flightDate <= '$highDate'  and departureTime <= '$highTime')"""
 
-      return listFlights(flightsQuery)
-			}
-  }
-			
+								return listFlights(flightsQuery)
+					}
+	}
+
 	def listFlights(flightsQuery : String) = {
 
 			// read flights from ThingSpan  
@@ -330,11 +330,15 @@ class EasyVisual(sc : SparkContext, sqlContext : SQLContext) {
 			}
 
 			(flightsRDD, graphAirports(flightsRDD))
-  }
-	
+	}
+
 	def graphAirports(flightsRDD: RDD[Flight]): RDD[(String, (Int, Airport))] = {
 			val airports = flightsRDD.flatMap( f => Seq(f.origin, f.destination) ).map ( ad => (ad, 1)).reduceByKey((x,y) => x + y)
-			val airportsRef = listAirports("United States").map(ap => (ap.IATA, ap))
-			airports.join(airportsRef)
+					val airportsRef = listAirports("United States").map(ap => (ap.IATA, ap))
+					airports.join(airportsRef)
+	}
+	
+	def close() {
+	  			sc.stop
 	}
 }

@@ -43,6 +43,12 @@
 			<version>${spark.version}</version>
 			<!-- <scope>provided</scope> -->
 		</dependency>
+		
+		<dependency>
+			<groupId>com.sparkjava</groupId>
+			<artifactId>spark-core</artifactId>
+			<version>2.2</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.apache.spark</groupId>
@@ -168,14 +174,14 @@
 							</filters>
 							<transformers>
 								<transformer
-								implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
-								<resource>reference.conf</resource>
+									implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+									<resource>reference.conf</resource>
 								</transformer>
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>com.objectivity.thingspan.examples.flights.MainEntry</mainClass>
-<!-- 									<X-Compile-Source-JDK>${maven.compiler.source}</X-Compile-Source-JDK> -->
-<!-- 									<X-Compile-Target-JDK>${maven.compiler.target}</X-Compile-Target-JDK> -->
+									<mainClass>com.objectivity.thingspan.examples.flights.ThingSpanFlights</mainClass>
+									<!-- <X-Compile-Source-JDK>${maven.compiler.source}</X-Compile-Source-JDK> -->
+									<!-- <X-Compile-Target-JDK>${maven.compiler.target}</X-Compile-Target-JDK> -->
 								</transformer>
 							</transformers>
 

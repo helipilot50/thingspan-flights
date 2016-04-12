@@ -5,6 +5,7 @@ import com.objectivity.thingspan.examples.flights.dataload.ReferenceData
 import com.objectivity.thingspan.examples.flights.dataload.FlightsLoader
 import com.objectivity.thingspan.examples.flights.visual.EasyVisual
 import com.objectivity.thingspan.examples.flights.model.AppConfig
+import org.apache.commons.cli.HelpFormatter
 
 object MainEntry {
   	def main(args: Array[String]) = {
@@ -14,11 +15,17 @@ object MainEntry {
 			options.addOption("r", "reference", false, "Load reference data")
 			options.addOption("f", "flights", false, "Load flights data")
 			options.addOption("v", "view", false, "View graph")
+			options.addOption("t", "test", false, "Test data")
 
 			val parser = new PosixParser()
 			val cl = parser.parse(options, args, false)
 
 
+			if (cl.hasOption("t")){
+				AppConfig.TestData = true
+			}	else {
+			  AppConfig.TestData = false
+			}
 			if (cl.hasOption("d")){
 				val dataDirString = cl.getOptionValue("d", "data")
 						AppConfig.DataDirectory = dataDirString
@@ -35,12 +42,14 @@ object MainEntry {
 			} else 	if (cl.hasOption("f")){
 			  FlightsLoader.load()
 			} else {
-			  println("options:")
-			  println("\t-d path to data directory - optional [data]")
-			  println("\t-b boot file - optional [data/flights.boot]")
-			  println("\t-r load reference data")
-			  println("\t-f load flights data")
-			  println("\t-v view graph")
+			  var formatter = new HelpFormatter();
+			  usage(formatter, options, 0)
 			}
   	}
+  	
+  	def usage(formatter: HelpFormatter, options: Options, 
+           exitCode: Int) { 
+       formatter.printHelp("java -jar thingspan-flights-<version>.jar", options) 
+       System.exit(exitCode) 
+   } 
 }
