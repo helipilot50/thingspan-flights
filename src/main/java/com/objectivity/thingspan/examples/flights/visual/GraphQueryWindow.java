@@ -47,6 +47,7 @@ import scala.Tuple2;
 import java.awt.Toolkit;
 import java.awt.Dimension;
 import javax.swing.JSpinner;
+import javax.swing.JScrollPane;
 
 public class GraphQueryWindow {
 
@@ -54,19 +55,20 @@ public class GraphQueryWindow {
 	private Graph graph;
 	private Viewer viewer;
 	private JPanel view;
-	private JFormattedTextField fromAirport;
+	private JFormattedTextField origin;
 	private JFormattedTextField toAirport;
 	private JFormattedDateTextField beginDateTime;
 	private JFormattedDateTextField endDateTime;
-	private DateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm");
 	private EasyVisual vis;
 	private JSpinner degreeSpinner;
 	private MaskFormatter airportFormatter;
+	private JScrollPane scrollGraphView;
 
 	/**
 	 * Launch the window
 	 */
 	public static void show(final EasyVisual vis) {
+		System.setProperty("gs.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -85,18 +87,25 @@ public class GraphQueryWindow {
 	public GraphQueryWindow(final EasyVisual vis) {
 		this.vis = vis;
 		this.graph = new MultiGraph("Flights");
-		this.graph.addAttribute("ui.stylesheet","url(file:.//style/stylesheet)"); 
-		this.graph.addAttribute("ui.quality"); 
-		this.graph.addAttribute("ui.antialias");
+		setUpGraph();
 		this.viewer = new Viewer(graph, Viewer.ThreadingModel.GRAPH_IN_GUI_THREAD);//Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
 		this.viewer.disableAutoLayout();
 		this.view = viewer.addDefaultView(false);   // false indicates "no JFrame".
 		  try {
 			  airportFormatter = new MaskFormatter("UUU");
+			  airportFormatter.setPlaceholderCharacter('_');
 		  } catch (ParseException e) {
 		    e.printStackTrace();
 		  }
 		initialize();
+		
+		//add graph
+		view.setMinimumSize(new Dimension(700,500));
+		view.setSize(new Dimension(700,500));
+		scrollGraphView.setViewportView(view);
+		view.setMinimumSize(new Dimension(700,500));
+		view.setSize(new Dimension(700,500));
+
 		frmFlightsGraphViewer.addWindowListener(new WindowAdapter(){
 			@Override
 			public void windowClosing(WindowEvent e) {
@@ -107,6 +116,12 @@ public class GraphQueryWindow {
 
 	}
 
+	private void setUpGraph(){
+		this.graph.addAttribute("ui.stylesheet","url(file:.//style/stylesheet)"); 
+		this.graph.addAttribute("ui.quality"); 
+		this.graph.addAttribute("ui.antialias");
+		
+	}
 
 	/**
 	 * Initialize the contents of the frame.
@@ -120,15 +135,17 @@ public class GraphQueryWindow {
 		frmFlightsGraphViewer.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmFlightsGraphViewer.getContentPane().setLayout(new BorderLayout(0, 0));
 
-		frmFlightsGraphViewer.getContentPane().add(view, BorderLayout.CENTER);
+		scrollGraphView = new JScrollPane();
+		frmFlightsGraphViewer.getContentPane().add(scrollGraphView, BorderLayout.CENTER);
 
+		
 		JPanel dialogPanel = new JPanel();
 		frmFlightsGraphViewer.getContentPane().add(dialogPanel, BorderLayout.WEST);
 		GridBagLayout gbl_dialogPanel = new GridBagLayout();
 		gbl_dialogPanel.columnWidths = new int[]{0, 0};
-		gbl_dialogPanel.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0};
+		gbl_dialogPanel.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0};
 		gbl_dialogPanel.columnWeights = new double[]{1.0, 1.0};
-		gbl_dialogPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_dialogPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		dialogPanel.setLayout(gbl_dialogPanel);
 
 		JLabel lblFrom = new JLabel("Origin");
@@ -139,14 +156,15 @@ public class GraphQueryWindow {
 		gbc_lblFrom.gridy = 0;
 		dialogPanel.add(lblFrom, gbc_lblFrom);
 
-		fromAirport = new JFormattedTextField(airportFormatter);
+		origin = new JFormattedTextField(airportFormatter);
 		GridBagConstraints gbc_fromAirport = new GridBagConstraints();
 		gbc_fromAirport.insets = new Insets(0, 0, 5, 0);
 		gbc_fromAirport.fill = GridBagConstraints.HORIZONTAL;
 		gbc_fromAirport.gridx = 1;
 		gbc_fromAirport.gridy = 0;
-		dialogPanel.add(fromAirport, gbc_fromAirport);
-		fromAirport.setColumns(3);
+		dialogPanel.add(origin, gbc_fromAirport);
+		origin.setColumns(3);
+		origin.setFocusLostBehavior(JFormattedTextField.PERSIST);
 		
 		JLabel lblDegree = new JLabel("Degree");
 		GridBagConstraints gbc_lblDegree = new GridBagConstraints();
@@ -181,6 +199,7 @@ public class GraphQueryWindow {
 		gbc_toAirport.gridy = 2;
 		dialogPanel.add(toAirport, gbc_toAirport);
 		toAirport.setColumns(3);
+		toAirport.setFocusLostBehavior(JFormattedTextField.PERSIST);
 
 		JLabel lblBegin = new JLabel("Departure");
 		GridBagConstraints gbc_lblBegin = new GridBagConstraints();
@@ -223,15 +242,32 @@ public class GraphQueryWindow {
 			}
 		});
 		GridBagConstraints gbc_btnGo = new GridBagConstraints();
+		gbc_btnGo.insets = new Insets(0, 0, 5, 0);
 		gbc_btnGo.fill = GridBagConstraints.BOTH;
 		gbc_btnGo.gridx = 1;
 		gbc_btnGo.gridy = 5;
 		dialogPanel.add(btnGo, gbc_btnGo);
+		
+		JButton btnClear = new JButton("Clear");
+		btnClear.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				graph.clear();
+				setUpGraph();
+			}
+		});
+		GridBagConstraints gbc_btnClear = new GridBagConstraints();
+		gbc_btnClear.gridx = 1;
+		gbc_btnClear.gridy = 6;
+		dialogPanel.add(btnClear, gbc_btnClear);
+		
 
+		
+		
+		
 	}
 
 	private void executeQuery(){
-		final String from = fromAirport.getText();
+		final String from = origin.getText();
 		final String to = toAirport.getText();
 		final String lowDateTime = beginDateTime.getText();
 		final String highDateTime = endDateTime.getText();
@@ -333,13 +369,13 @@ public class GraphQueryWindow {
 			Tuple2<JavaRDD<Flight>, JavaRDD<Airport>> chunks = vis.nodeEdgesFor(from, to, lowDateTime, highDateTime);
 			airports = chunks._2().collect();
 			flights = chunks._1().collect();
-			System.out.println("published " );
+			System.out.println("queried " );
 			return flights;
 			
 		}
 
 		protected void done() {
-			//graph.clear();
+			System.out.println(String.format("display start AD:%d FL:%d", this.airports.size(), this.flights.size()) );
 			for (Airport airport : this.airports){
 				try{
 					Node node = graph.addNode(airport.getIATA());//.asInstanceOf[MultiNode] 
@@ -368,7 +404,7 @@ public class GraphQueryWindow {
 				} catch (IdAlreadyInUseException e) {
 				}
 			}
-
+			System.out.println("displayed " );
 		}
 	}
 
