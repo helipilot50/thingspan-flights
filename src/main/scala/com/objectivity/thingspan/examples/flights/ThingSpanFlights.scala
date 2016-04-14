@@ -16,6 +16,7 @@ object ThingSpanFlights {
 			options.addOption("f", "flights", false, "Load flights data")
 			options.addOption("v", "view", false, "View graph")
 			options.addOption("t", "test", false, "Test data")
+			options.addOption("m", "master", true, "Spark Master default: local[*]")
 
 			val parser = new PosixParser()
 			val cl = parser.parse(options, args, false)
@@ -35,6 +36,12 @@ object ThingSpanFlights {
 				val bootString = cl.getOptionValue("b", "data/flights.boot")
 						AppConfig.Boot = bootString
 			}	
+
+			if (cl.hasOption("m")){
+				val masterString = cl.getOptionValue("m", "local[*]")
+						AppConfig.SparkMaster = masterString
+			}	
+
 			if (cl.hasOption("v")){
 			  EasyVisual.show()
 			} else if (cl.hasOption("r")){

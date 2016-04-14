@@ -68,7 +68,7 @@ public class GraphQueryWindow {
 	 * Launch the window
 	 */
 	public static void show(final EasyVisual vis) {
-		System.setProperty("gs.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
+		System.setProperty("org.graphstream.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -129,7 +129,7 @@ public class GraphQueryWindow {
 	private void initialize() {
 		frmFlightsGraphViewer = new JFrame();
 		frmFlightsGraphViewer.setMinimumSize(new Dimension(800, 600));
-		frmFlightsGraphViewer.setIconImage(Toolkit.getDefaultToolkit().getImage(GraphQueryWindow.class.getResource("/com/objectivity/thingspan/examples/flights/visual/ObjyTriangleLogo.png")));
+		frmFlightsGraphViewer.setIconImage(Toolkit.getDefaultToolkit().getImage(GraphQueryWindow.class.getResource("/ObjyTriangleLogo.png")));
 		frmFlightsGraphViewer.setTitle("Flights graph viewer");
 		frmFlightsGraphViewer.setBounds(100, 100, 800, 600);
 		frmFlightsGraphViewer.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -158,8 +158,8 @@ public class GraphQueryWindow {
 
 		origin = new JFormattedTextField(airportFormatter);
 		GridBagConstraints gbc_fromAirport = new GridBagConstraints();
+		gbc_fromAirport.anchor = GridBagConstraints.WEST;
 		gbc_fromAirport.insets = new Insets(0, 0, 5, 0);
-		gbc_fromAirport.fill = GridBagConstraints.HORIZONTAL;
 		gbc_fromAirport.gridx = 1;
 		gbc_fromAirport.gridy = 0;
 		dialogPanel.add(origin, gbc_fromAirport);
@@ -176,7 +176,7 @@ public class GraphQueryWindow {
 		
 		degreeSpinner = new JSpinner();
 		GridBagConstraints gbc_degreeSpinner = new GridBagConstraints();
-		gbc_degreeSpinner.fill = GridBagConstraints.HORIZONTAL;
+		gbc_degreeSpinner.anchor = GridBagConstraints.WEST;
 		gbc_degreeSpinner.insets = new Insets(0, 0, 5, 0);
 		gbc_degreeSpinner.gridx = 1;
 		gbc_degreeSpinner.gridy = 1;
@@ -193,8 +193,8 @@ public class GraphQueryWindow {
 
 		toAirport = new JFormattedTextField(airportFormatter);
 		GridBagConstraints gbc_toAirport = new GridBagConstraints();
+		gbc_toAirport.anchor = GridBagConstraints.WEST;
 		gbc_toAirport.insets = new Insets(0, 0, 5, 0);
-		gbc_toAirport.fill = GridBagConstraints.HORIZONTAL;
 		gbc_toAirport.gridx = 1;
 		gbc_toAirport.gridy = 2;
 		dialogPanel.add(toAirport, gbc_toAirport);
@@ -235,16 +235,17 @@ public class GraphQueryWindow {
 		dialogPanel.add(endDateTime, gbc_endDateTime);
 		endDateTime.setColumns(10);
 
-		JButton btnGo = new JButton("Go");
+		JButton btnGo = new JButton("Query");
 		btnGo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				executeQuery();
 			}
 		});
 		GridBagConstraints gbc_btnGo = new GridBagConstraints();
+		gbc_btnGo.gridwidth = 2;
 		gbc_btnGo.insets = new Insets(0, 0, 5, 0);
 		gbc_btnGo.fill = GridBagConstraints.BOTH;
-		gbc_btnGo.gridx = 1;
+		gbc_btnGo.gridx = 0;
 		gbc_btnGo.gridy = 5;
 		dialogPanel.add(btnGo, gbc_btnGo);
 		
@@ -256,7 +257,9 @@ public class GraphQueryWindow {
 			}
 		});
 		GridBagConstraints gbc_btnClear = new GridBagConstraints();
-		gbc_btnClear.gridx = 1;
+		gbc_btnClear.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnClear.gridwidth = 2;
+		gbc_btnClear.gridx = 0;
 		gbc_btnClear.gridy = 6;
 		dialogPanel.add(btnClear, gbc_btnClear);
 		

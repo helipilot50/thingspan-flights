@@ -23,7 +23,7 @@ class ReferenceData{
 object ReferenceData {
  	def load()  {
 			
-			var conf = new SparkConf()
+			var conf = new SparkConf().setMaster(AppConfig.SparkMaster)
 			conf.setAppName("ReferenceDataLoader")
 			
 

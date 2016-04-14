@@ -12,7 +12,7 @@ import com.objectivity.thingspan.examples.flights.model.Airport
 
 object Resequence {
   def main(args: Array[String]) {
-  	val sc = new SparkContext(new SparkConf().setAppName("FlightResequence").setMaster("local[*]"))
+  	val sc = new SparkContext(new SparkConf().setAppName("Flight Resequence").setMaster(AppConfig.SparkMaster))
   	val sqlContext = new SQLContext(sc)
 		val start = java.lang.System.currentTimeMillis()
 		

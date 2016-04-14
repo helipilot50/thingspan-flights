@@ -9,6 +9,7 @@ object AppConfig {
   var port = 7777
   var host = "localhost"
   var time = 30
+  var SparkMaster = "local[*]"
 }
 
 case class Airport(

@@ -19,7 +19,7 @@ object FlightsLoader {
 	def load() = {
 
 			var conf = new SparkConf()
-					conf.setAppName("FlightDataLoader")
+					conf.setAppName("FlightDataLoader").setMaster(AppConfig.SparkMaster)
 
 					// Turn off extra info for serializer exceptions (not working)
 					conf.set("spark.serializer.extraDebugInfo", "false")

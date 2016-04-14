@@ -21,10 +21,10 @@ import org.apache.spark.api.java.JavaRDD
 object EasyVisual {
 
 	def show() = {
-			var conf = new SparkConf()
+			var conf = new SparkConf().setMaster(AppConfig.SparkMaster)
 					conf.setAppName("EasyVisual")
 					conf.set("spark.serializer.extraDebugInfo", "false")
-					conf.setMaster("local")
+					conf.setMaster(AppConfig.SparkMaster)
 					val sc = new SparkContext(conf)
 					val sqlContext = new SQLContext(sc);
 			import sqlContext.implicits._
