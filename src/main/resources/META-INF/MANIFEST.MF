@@ -1,3 +1,3 @@
 Manifest-Version: 1.0
 Build-Jdk: 1.7.0
-Main-class: com.objectivity.thingspan.examples.flights.MainEntry
+Main-class: com.objectivity.thingspan.examples.flights.ThingSpanFlights
