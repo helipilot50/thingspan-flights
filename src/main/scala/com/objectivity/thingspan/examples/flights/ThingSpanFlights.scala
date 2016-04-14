@@ -7,7 +7,7 @@ import com.objectivity.thingspan.examples.flights.visual.EasyVisual
 import com.objectivity.thingspan.examples.flights.model.AppConfig
 import org.apache.commons.cli.HelpFormatter
 
-object MainEntry {
+object ThingSpanFlights {
   	def main(args: Array[String]) = {
 			var options = new Options()
 			options.addOption("d", "data", true, "Data directory")
