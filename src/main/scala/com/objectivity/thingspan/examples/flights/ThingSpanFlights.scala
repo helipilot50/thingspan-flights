@@ -1,8 +1,8 @@
 package com.objectivity.thingspan.examples.flights
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.PosixParser
-import com.objectivity.thingspan.examples.flights.dataload.ReferenceData
-import com.objectivity.thingspan.examples.flights.dataload.FlightsLoader
+import com.objectivity.thingspan.examples.flights.dataload.LoadData
+import com.objectivity.thingspan.examples.flights.dataload.Relationships
 import com.objectivity.thingspan.examples.flights.visual.EasyVisual
 import com.objectivity.thingspan.examples.flights.model.AppConfig
 import org.apache.commons.cli.HelpFormatter
@@ -12,8 +12,8 @@ object ThingSpanFlights {
 			var options = new Options()
 			options.addOption("d", "data", true, "Data directory")
 			options.addOption("b", "boot", true, "Boot file")
-			options.addOption("r", "reference", false, "Load reference data")
-			options.addOption("f", "flights", false, "Load flights data")
+			options.addOption("i", "input", false, "Load data")
+			options.addOption("r", "relation", false, "Build relationships")
 			options.addOption("v", "view", false, "View graph")
 			options.addOption("t", "test", false, "Test data")
 			options.addOption("m", "master", true, "Spark Master default: local[*]")
@@ -44,10 +44,10 @@ object ThingSpanFlights {
 
 			if (cl.hasOption("v")){
 			  EasyVisual.show()
-			} else if (cl.hasOption("r")){
-			  ReferenceData.load()
-			} else 	if (cl.hasOption("f")){
-			  FlightsLoader.load()
+			} else if (cl.hasOption("i")){
+			  LoadData.load()
+			} else 	if (cl.hasOption("r")){
+			  Relationships.load()
 			} else {
 			  var formatter = new HelpFormatter();
 			  usage(formatter, options, 0)

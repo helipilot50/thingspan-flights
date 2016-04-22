@@ -2,59 +2,65 @@
 
 This example is a demonstration of ThingSpan processing and visuializing domestic flight data.
 
-## Install Thingspan jar
+## Install thingspan
+Install ThingSpan by running the installer
+
+	sudo ./installer-version-linux86_64.run
+
+Start lock server
+
+	objy StartLockServer
+
+Change directory to your flights directory and create a database
+ 
+	objy CreateFd -fdName flights -fdDirPath data
+
+
+## Install Thingspan jar 
 Install the thingspan jar to a local repo - only once
 ```bash
 	mvn deploy:deploy-file -Durl=file://repo -Dfile=lib/spark-rdd-1.0.0-all.jar -DgroupId=com.objectivity -DartifactId=thingspan-spark-rdd -Dpackaging=jar -Dversion=1.0.0
 ```
-# US Domestic Flights
 
-## Loading Reference Data
+## Build
+The application is built using Maven
+
+	mvn clean package
+
+## Run
+The build processes creates a single runnable mega JAR. The options to run this JAR are:
+
+	usage: java -jar thingspan-flights-<version>.jar
+	 -b,--boot <arg>     Boot file
+	 -d,--data <arg>     Data directory
+	 -i,--input          Load data
+	 -m,--master <arg>   Spark Master default: local[*]
+	 -r,--relation       Build relationships
+	 -t,--test           Test data
+	 -v,--view           View graph
+
+### Loading Reference Data
 Reference data are Airports, Airlines and Routes. This data only needs to be loaded once.
 
 Use the following command to load reference data:
 
-```bash
-	spark-submit \
-  	--master local[*] \
-  	--class com.objectivity.thingspan.examples.flights.ReferenceData \
-	--total-executor-cores 10 \
-	--executor-memory 10g \
-	thingspan-flights-dataload-1.0.0.jar -d data -b flights.boot
-```
-## Loading Flights
+	java -cp target/thingspan-flights-1.0.0-SNAPSHOT.jar com.objectivity.thingspan.examples.flights.ThingSpanFlights -d data -b data/flights.boot -r
+
+	
+
+### Loading Flights
 Flights are events that connect Airlines and Airports. In a graph, Airports and Airlines are vertices and Flights are edges.
 
 Flights are added using the following command:
-```bash
-	spark-submit \
-  	--master Local[1] \
-  	--class com.objectivity.thingspan.examples.flights.FlightsLoader \
-	--total-executor-cores 1 \
-	--executor-memory 10g \
-	thingspan-flights-dataload-1.0.0.jar -d data -b flights.boot
-```
 
+	java -cp target/thingspan-flights-1.0.0-SNAPSHOT.jar com.objectivity.thingspan.examples.flights.ThingSpanFlights -d data -b data/flights.boot -f
 
-## Loading Flights with streaming
+Relationships between flights and airports will be created during this load
 
-Start the streaming loader using the following command:
-```bash
-	nc -lk <port>&
+### Visualizing flights
 
-	spark-submit \
-  	--master Local[1] \
-  	--class com.objectivity.thingspan.examples.flights.FlightsStream \
-	--total-executor-cores 1 \
-	--executor-memory 10g \
-	thingspan-flights-dataload-1.0.0.jar -h <host> -p <port> -t 30 -b flights.boot
-```
-Run the nc command using:
-```bash
-	
-	cd <data direcrtory/flights>
-	cat * | nc <host> <port>
-```
+	java -cp target/thingspan-flights-1.0.0-SNAPSHOT.jar com.objectivity.thingspan.examples.flights.ThingSpanFlights -d data -b data/flights.boot -v
 
+### Run using test data
 
-
+	java -cp target/thingspan-flights-1.0.0-SNAPSHOT.jar com.objectivity.thingspan.examples.flights.ThingSpanFlights -d data -b data/flights.boot -v -t

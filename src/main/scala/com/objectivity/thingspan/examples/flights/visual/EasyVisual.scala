@@ -1,7 +1,5 @@
 package com.objectivity.thingspan.examples.flights.visual
 
-import org.apache.commons.cli.Options
-import org.apache.commons.cli.PosixParser
 import org.apache.spark.SparkConf
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
@@ -17,6 +15,20 @@ import org.graphstream.graph.IdAlreadyInUseException
 import org.graphstream.graph.ElementNotFoundException
 import org.apache.spark.api.java.JavaRDD
 
+
+//import com.objy.data.Attribute;
+//import com.objy.data.Instance;
+//import com.objy.data.Edge;
+//import com.objy.data.Variable;
+//import com.objy.db.TransactionMode;
+//import com.objy.db.TransactionScope;
+//import com.objy.db.TransactionScopeOption;
+//import com.objy.expression.ExpressionTree;
+//import com.objy.expression.ExpressionTreeBuilder;
+//import com.objy.expression.OperatorExpression;
+//import com.objy.expression.OperatorExpressionBuilder;
+//import com.objy.expression.language.LanguageRegistry;
+//import com.objy.statement.Statement;
 
 object EasyVisual {
 
@@ -99,7 +111,7 @@ class EasyVisual(sc : SparkContext, sqlContext : SQLContext) {
 								option("objy.addOidColumn", "airportOid").
 								load 
 
-								airportsDF.registerTempTable("airportssTable")
+								airportsDF.registerTempTable("airportsTable")
 
 								val airportsQuery = s"""SELECT
 								airportOid,

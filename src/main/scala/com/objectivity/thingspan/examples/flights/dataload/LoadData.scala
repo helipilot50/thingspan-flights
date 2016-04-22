@@ -1,26 +1,24 @@
 package com.objectivity.thingspan.examples.flights.dataload
 
 import scala.reflect.runtime.universe
-
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.PosixParser
 import org.apache.spark.SparkConf
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.sql.SaveMode
-
-
 import com.objectivity.thingspan.examples.flights.model.AppConfig
 import com.objectivity.thingspan.examples.flights.model.Airport
 import com.objectivity.thingspan.examples.flights.model.Airline
 import com.objectivity.thingspan.examples.flights.model.Route
+import com.objectivity.thingspan.examples.flights.model.Flight
 
 
-class ReferenceData{
-  
+class LoadData{
+
 }
 
-object ReferenceData {
+object LoadData {
  	def load()  {
 			
 			var conf = new SparkConf().setMaster(AppConfig.SparkMaster)
@@ -85,8 +83,29 @@ object ReferenceData {
   			
    			var stop = java.lang.System.currentTimeMillis()
 
-       println("Time to ingest Airlines/Airports/Routes" + (airlinesCount+airportsCount+routesCount) + " items is: " + (stop-start) + " ms")
- 
+        println("Time to ingest Airlines/Airports/Routes" + (airlinesCount+airportsCount+routesCount) + " items is: " + (stop-start) + " ms")
+
+       	println("Loading Flights data ...")
+       	
+       	start = java.lang.System.currentTimeMillis()
+						val flightsCSV = sc.textFile(AppConfig.DataDirectory +"/flights/csv") 
+						val flightsRDD = flightsCSV.map(Flight.flightFromCSV(_))   
+						val flightsCount = flightsRDD.count
+
+						var flightsDF = sqlContext.createDataFrame(flightsRDD)
+						println(s"Flights: $flightsCount")
+						println("Flights schema:")
+						flightsDF.printSchema()
+						flightsDF.write.mode(SaveMode.Overwrite).
+						format("com.objy.spark.sql").
+						option("objy.bootFilePath", AppConfig.Boot).
+						option("objy.dataClassName", "com.objectivity.thingspan.examples.flights.Flight").
+						save()
+						flightsDF.registerTempTable("flightsTable")
+						stop = java.lang.System.currentTimeMillis()
+						println("Time to ingest Flights" + (flightsCount) + " items is: " + (stop-start) + " ms")
+
+
 			sc.stop
 	}
 
