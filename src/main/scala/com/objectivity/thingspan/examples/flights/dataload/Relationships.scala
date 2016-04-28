@@ -54,7 +54,7 @@ object Relationships {
 						/*
 						 * Spark SQL for origin airport and flight
 						 */
-						val flightOriginJoin = new StringBuilder()
+				val flightOriginJoin = new StringBuilder()
 						flightOriginJoin.append("SELECT airportOid, flightOid "); 
     				flightOriginJoin.append("from flightsTable inner join airportsTable ");    
     				flightOriginJoin.append("ON flightsTable.origin=airportsTable.IATA");

@@ -2,17 +2,57 @@ package com.objectivity.thingspan.examples.flights.model
 
 import scala.beans.BeanProperty
 
-object AppConfig { 
-	var Boot = "data/flights.boot"
-	var TestData = false
-  var DataDirectory = "data"
-  var port = 7777
-  var host = "localhost"
-  var time = 30
-  var SparkMaster = "local[*]"
+import com.objy.db.app.OneToOne
+import com.objy.db.app.ToOneRelationship
+import com.objy.db.app.ooObj
+import com.objy.db.app.Relationship
+import com.objy.db.app.ToManyRelationship
+import com.objy.db.app.OneToMany
+import com.objy.db.DatabaseNotFoundException
+import com.objy.db.ObjyRuntimeException
+import com.objy.db.DatabaseClosedException
+import com.objy.db.app.oo
+import com.objy.db.app.Connection
+import com.objy.db.DatabaseOpenException
+
+trait FlightsEdge extends ooObj
+trait FlightsVertex extends ooObj
+
+/*
+ * Verticies
+ */
+case class Airline (
+
+		@BeanProperty var airlineId: Int,    // Unique OpenFlights identifier for this airline.
+		@BeanProperty var name: String,      // Name of the airline.
+		@BeanProperty var alias: String,     // Alias of the airline. For example, All Nippon Airways is commonly known as "ANA".
+		@BeanProperty var IATA: String,      // 2-letter IATA code, if available.
+		@BeanProperty var ICAO: String,      // 3-letter ICAO code, if available.
+		@BeanProperty var callsign: String,  // Airline callsign.
+		@BeanProperty var country: String,   // Country or territory where airline is incorporated.
+		@BeanProperty var active: String    // "Y" if the airline is or has until recently been operational, "N" if it is defunct. 
+) extends FlightsVertex 
+
+object Airline {
+	def airlineFromCSV(source: String): Airline = {
+
+			val p = source.split(",").map(_.trim)
+			
+			Airline(p(0).toInt,  
+							Tools.trimQuotes(p(1)),       
+							Tools.trimQuotes(p(2)),       
+							Tools.trimQuotes(p(3)),       
+							Tools.trimQuotes(p(4)),       
+							Tools.trimQuotes(p(6)),       
+							Tools.trimQuotes(p(6)),       
+							Tools.trimQuotes(p(7))       
+							)
+	}
 }
 
-case class Airport(
+
+
+case class Airport (
 
 		@BeanProperty var airportId: Int,	// Unique identifier for this airport.
 		@BeanProperty var name: String,			// Name of airport. May or may not contain the City name.
@@ -25,10 +65,40 @@ case class Airport(
 		@BeanProperty var altitude: Int,      // In feet.
 		@BeanProperty var timezone: Double,	// Hours offset from UTC. Fractional hours are expressed as decimals, eg. India is 5.5. 
 		@BeanProperty var DST: String,        // DST	Daylight savings time. One of E (Europe), A (US/Canada), S (South America), O (Australia), Z (New Zealand), N (None) or U (Unknown).
-		@BeanProperty var tz: String               //Timezone in "tz" (Olson) format, eg. "America/Los_Angeles".
-		)
+		@BeanProperty var tz: String,               //Timezone in "tz" (Olson) format, eg. "America/Los_Angeles".
+		@BeanProperty var inboundFlights: ToManyRelationship = null,
+		@BeanProperty var outboundFlights: ToManyRelationship = null
+		) extends FlightsVertex
 
 object Airport {
+  
+  def inboundFlights_Relationship(): OneToMany = {
+      val inbound = new OneToMany("inboundFlights",  // Relationship field
+                  "com.objectivity.thingspan.examples.flights.model.Flight", // Destination class
+                  "to",                      // Inverse relationship                    
+                  Relationship.COPY_MOVE,    // Copying behavior
+                  Relationship.VERSION_MOVE, // Versioning behavior
+                  false,                     // Delete propagation
+                  false,                     // Lock propagation
+                  Relationship.INLINE_LONG)  // Storage mode
+    inbound
+  }
+
+  def outboundFlights_Relationship(): OneToMany = {
+      val outbound = new OneToMany("outboundFlights",  // Relationship field
+                  "com.objectivity.thingspan.examples.flights.model.Flight", // Destination class
+                  "from",                      // Inverse relationship                    
+                  Relationship.COPY_MOVE,    // Copying behavior
+                  Relationship.VERSION_MOVE, // Versioning behavior
+                  false,                     // Delete propagation
+                  false,                     // Lock propagation
+                  Relationship.INLINE_LONG)  // Storage mode
+    outbound
+  }
+
+  
+  
+  
   def enptyAirport(): Airport = {
 					Airport(0,  
 							null,       
@@ -65,35 +135,6 @@ object Airport {
 	}
 }
 
-case class Airline(
-
-		@BeanProperty var airlineId: Int,    // Unique OpenFlights identifier for this airline.
-		@BeanProperty var name: String,      // Name of the airline.
-		@BeanProperty var alias: String,     // Alias of the airline. For example, All Nippon Airways is commonly known as "ANA".
-		@BeanProperty var IATA: String,      // 2-letter IATA code, if available.
-		@BeanProperty var ICAO: String,      // 3-letter ICAO code, if available.
-		@BeanProperty var callsign: String,  // Airline callsign.
-		@BeanProperty var country: String,   // Country or territory where airline is incorporated.
-		@BeanProperty var active: String    // "Y" if the airline is or has until recently been operational, "N" if it is defunct. 
-)
-
-object Airline {
-	def airlineFromCSV(source: String): Airline = {
-
-			val p = source.split(",").map(_.trim)
-			
-			Airline(p(0).toInt,  
-							Tools.trimQuotes(p(1)),       
-							Tools.trimQuotes(p(2)),       
-							Tools.trimQuotes(p(3)),       
-							Tools.trimQuotes(p(4)),       
-							Tools.trimQuotes(p(6)),       
-							Tools.trimQuotes(p(6)),       
-							Tools.trimQuotes(p(7))       
-							)
-	}
-}
-
 case class Route (
 
 		@BeanProperty var airline: String,             // 2-letter (IATA) or 3-letter (ICAO) code of the airline.
@@ -106,7 +147,7 @@ case class Route (
 		@BeanProperty var stops: Int,                  //	Number of stops on this flight ("0" for direct)
 		@BeanProperty var equipment: String            //	3-letter codes for plane type(s) generally used on this flight, separated by spaces
 
-)
+) extends FlightsVertex
     
 object Route {
 	def routeFromCSV(source: String): Route = {
@@ -125,6 +166,10 @@ object Route {
 	}
 }
 
+/*
+ * Edges
+ */
+
 case class Flight (
 		@BeanProperty var year: Int,
 		@BeanProperty var dayOfMonth: Int,
@@ -138,10 +183,36 @@ case class Flight (
 		@BeanProperty var arrivalTime: String,
 		@BeanProperty var elapsedTime: Int,
 		@BeanProperty var airTime: Int,
-		@BeanProperty var distance: Int
-		)
+		@BeanProperty var distance: Int,
+		@BeanProperty var from: ToOneRelationship = null,
+		@BeanProperty var to: ToOneRelationship = null
+		) extends FlightsEdge
 
 object Flight {
+  
+  def flyTo_Relationship(): OneToOne = {
+    val flyTo = new OneToOne("to",         // Relationship field
+                "com.objectivity.thingspan.examples.flights.model.Airport", // Destination class
+                "flight",                  // Inverse relationship                    
+                Relationship.COPY_MOVE,    // Copying behavior
+                Relationship.VERSION_MOVE, // Versioning behavior
+                false,                     // Delete propagation
+                false,                     // Lock propagation
+                Relationship.INLINE_LONG)  // Storage mode
+    flyTo
+  }
+  def flyFrom_Relationship(): OneToOne = {
+    val flyFrom = new OneToOne("from",     // Relationship field
+                "com.objectivity.thingspan.examples.flights.model.Airport", // Destination class
+                "flight",                  // Inverse relationship                    
+                Relationship.COPY_MOVE,    // Copying behavior
+                Relationship.VERSION_MOVE, // Versioning behavior
+                false,                     // Delete propagation
+                false,                     // Lock propagation
+                Relationship.INLINE_LONG)  // Storage mode
+    flyFrom
+  }
+ 
 	def flightFromCSV(source: String): Flight = {
 			val Pattern = """^\d+,(\d+),(\d+),(\d\d\d\d/\d\d/\d\d),(\d+),(\w\w),(\d+),\d+,(\w\w\w),.+?,.+?,(\w\w\w),.+?,.+?,(\d+),(\d+),(\d+),(\d+),(\d+)""".r
 
@@ -178,8 +249,63 @@ object Flight {
 	}
 }
 
+
+/*
+ * Tools
+ */
+object AppConfig { 
+	var Boot = "data/flights.boot"
+	var TestData = false
+  var DataDirectory = "data"
+  var port = 7777
+  var host = "localhost"
+  var time = 30
+  var SparkMaster = "local[*]"
+}
+
+
 object Tools {
   def ltrimQuotes(s: String) = s.replaceAll("^\\\"", "")
   def rtrimQuotes(s: String) = s.replaceAll("\"$", "")
   def trimQuotes(s: String) = rtrimQuotes(ltrimQuotes(s))
+  
+  /**
+   * register the persistent classes
+   */
+  def registerClasses() {
+    
+    println("Flights Register Classes");
+
+			//	connect to federation
+			try {
+				println("\tOpen Connection()")
+				var connection = Connection.open(AppConfig.Boot, oo.openReadWrite)
+				
+			  println("\tRegister Classes")
+			  connection.useContextClassLoader(true)
+		    connection.registerClass(classOf[Airport].getName)
+        connection.registerClass(classOf[Flight].getName)
+		    
+			  println("\tClose Connection");
+				connection.close();
+			} catch {
+			  case  dnfe: DatabaseNotFoundException => {
+      				println("Federated database not found - use objy newfd to create federated database.")
+      				println("Error: " + dnfe.getMessage())
+      			}
+			  
+  			case doe: DatabaseOpenException => {
+  				println("Error: " + doe.getMessage());
+  			}
+  
+  			case e: DatabaseClosedException => {
+  				e.printStackTrace();
+  			}
+  		
+  			case  ore: ObjyRuntimeException => {
+    			println("ObjyRuntimeException: " + ore.getMessage());
+    			ore.printStackTrace();
+    		}
+     }
+  }
 }

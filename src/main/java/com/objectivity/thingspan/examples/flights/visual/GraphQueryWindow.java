@@ -378,6 +378,8 @@ public class GraphQueryWindow {
 		}
 
 		protected void done() {
+			if (this.airports == null || this.flights == null)
+				return;
 			System.out.println(String.format("display start AD:%d FL:%d", this.airports.size(), this.flights.size()) );
 			for (Airport airport : this.airports){
 				try{

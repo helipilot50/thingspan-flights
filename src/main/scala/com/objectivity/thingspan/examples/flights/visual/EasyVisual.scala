@@ -14,6 +14,7 @@ import org.graphstream.graph.Node
 import org.graphstream.graph.IdAlreadyInUseException
 import org.graphstream.graph.ElementNotFoundException
 import org.apache.spark.api.java.JavaRDD
+import com.objectivity.thingspan.examples.flights.query.FlightService
 
 
 //import com.objy.data.Attribute;
@@ -160,7 +161,7 @@ class EasyVisual(sc : SparkContext, sqlContext : SQLContext) {
 	airports.filter { ad => !ad.IATA.isEmpty() }
 	}
 
-	def listFlightsFrom(from:String, lowDateTime : String, highDateTime : String): (RDD[Flight], RDD[(String, (Int, Airport))]) = {
+	def listFlightsFrom(from:String, lowDateTime : String, highDateTime : String, degree:Int = 1): (RDD[Flight], RDD[(String, (Int, Airport))]) = {
 
 			val lowDate = Flight.formatDate(lowDateTime.substring(0,8))
 					val lowTime = Flight.padTime(lowDateTime.substring(8))
@@ -189,6 +190,8 @@ class EasyVisual(sc : SparkContext, sqlContext : SQLContext) {
 								WHERE (origin = '$from') and (flightDate >= '$lowDate' and departureTime >= '$lowTime') and (flightDate <= '$highDate'  and departureTime <= '$highTime')"""
 
 								return listFlights(flightsQuery)
+//					  println(s".. calling listFlightsFrom($sc, $from, $lowDateTime, $highDateTime, $degree")
+//					  FlightService.listFlightsFrom(sc, from, lowDateTime, highDateTime, degree)
 					}
 	}
 

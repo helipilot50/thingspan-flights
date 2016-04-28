@@ -6,6 +6,9 @@ import com.objectivity.thingspan.examples.flights.dataload.Relationships
 import com.objectivity.thingspan.examples.flights.visual.EasyVisual
 import com.objectivity.thingspan.examples.flights.model.AppConfig
 import org.apache.commons.cli.HelpFormatter
+import com.objectivity.thingspan.examples.flights.query.FlightService
+import org.apache.spark.SparkConf
+import org.apache.spark.SparkContext
 
 object ThingSpanFlights {
   	def main(args: Array[String]) = {
@@ -17,6 +20,7 @@ object ThingSpanFlights {
 			options.addOption("v", "view", false, "View graph")
 			options.addOption("t", "test", false, "Test data")
 			options.addOption("m", "master", true, "Spark Master default: local[*]")
+			options.addOption("z", "zulu", false, "Zulu test")
 
 			val parser = new PosixParser()
 			val cl = parser.parse(options, args, false)
@@ -24,8 +28,10 @@ object ThingSpanFlights {
 
 			if (cl.hasOption("t")){
 				AppConfig.TestData = true
+				
 			}	else {
 			  AppConfig.TestData = false
+			  
 			}
 			if (cl.hasOption("d")){
 				val dataDirString = cl.getOptionValue("d", "data")
@@ -44,10 +50,16 @@ object ThingSpanFlights {
 
 			if (cl.hasOption("v")){
 			  EasyVisual.show()
+			  
 			} else if (cl.hasOption("i")){
 			  LoadData.load()
+			  
 			} else 	if (cl.hasOption("r")){
 			  Relationships.load()
+			  
+			} else if (cl.hasOption("z")){
+			  FlightService.zuluTest()
+			  
 			} else {
 			  var formatter = new HelpFormatter();
 			  usage(formatter, options, 0)
