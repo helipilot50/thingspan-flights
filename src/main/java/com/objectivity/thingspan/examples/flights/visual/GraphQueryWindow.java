@@ -361,15 +361,15 @@ public class GraphQueryWindow {
 		List<Airport> airports;
 
 		public EdgeWorker(String from, Integer degree, String to, String lowDateTime, String highDateTime){
-			this.from = from.toUpperCase();
+			this.from = from.toUpperCase().replace("_", "");
 			this.degree = degree;
-			this.to = to.toUpperCase();
+			this.to = to.toUpperCase().replace("_", "");
 			this.lowDateTime = lowDateTime.replace("/", "").replace(" ", "").replace(":", "");
 			this.highDateTime = highDateTime.replace("/", "").replace(" ", "").replace(":", "");
 		}
 		@Override
 		protected  List<Flight> doInBackground() throws Exception {
-			Tuple2<JavaRDD<Flight>, JavaRDD<Airport>> chunks = vis.nodeEdgesFor(from, to, lowDateTime, highDateTime);
+			Tuple2<JavaRDD<Flight>, JavaRDD<Airport>> chunks = vis.nodeEdgesFor(from, to, lowDateTime, highDateTime, degree);
 			airports = chunks._2().collect();
 			flights = chunks._1().collect();
 			System.out.println("queried " );

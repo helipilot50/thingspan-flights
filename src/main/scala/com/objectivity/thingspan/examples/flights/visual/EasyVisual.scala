@@ -79,7 +79,9 @@ object EasyVisual {
 
 class EasyVisual(sc : SparkContext, sqlContext : SQLContext) {
 
-	def nodeEdgesFor(from:String, to:String, lowDateTime : String, highDateTime : String) : (JavaRDD[Flight], JavaRDD[Airport]) = {
+	def nodeEdgesFor(from:String, to:String, lowDateTime : String, highDateTime : String, degree: Int) : (JavaRDD[Flight], JavaRDD[Airport]) = {
+	  println(s".. calling nodeEdgesFor($from, $to, $lowDateTime, $highDateTime")
+
 		var fltAD: (RDD[Flight], RDD[(String, (Int, Airport))]) = null
 		
 				if (from != null && !from.isEmpty() && (to == null || to.isEmpty())){
@@ -162,6 +164,7 @@ class EasyVisual(sc : SparkContext, sqlContext : SQLContext) {
 	}
 
 	def listFlightsFrom(from:String, lowDateTime : String, highDateTime : String, degree:Int = 1): (RDD[Flight], RDD[(String, (Int, Airport))]) = {
+	  
 
 			val lowDate = Flight.formatDate(lowDateTime.substring(0,8))
 					val lowTime = Flight.padTime(lowDateTime.substring(8))
@@ -172,26 +175,26 @@ class EasyVisual(sc : SparkContext, sqlContext : SQLContext) {
 						val flights = TestData.aLotOfFlightsFrom(sc, from, lowDate, lowTime, highDate, highTime)
 								return (flights, graphAirports(flights))
 					} else {
-						val flightsQuery = s"""SELECT
-								year,
-								dayOfMonth,
-								flightDate,
-								airlineId,
-								carrier,
-								flightNumber,
-								origin,
-								destination,
-								departureTime,
-								arrivalTime,
-								elapsedTime,
-								airTime,
-								distance
-								FROM flightsTable
-								WHERE (origin = '$from') and (flightDate >= '$lowDate' and departureTime >= '$lowTime') and (flightDate <= '$highDate'  and departureTime <= '$highTime')"""
-
-								return listFlights(flightsQuery)
-//					  println(s".. calling listFlightsFrom($sc, $from, $lowDateTime, $highDateTime, $degree")
-//					  FlightService.listFlightsFrom(sc, from, lowDateTime, highDateTime, degree)
+//						val flightsQuery = s"""SELECT
+//								year,
+//								dayOfMonth,
+//								flightDate,
+//								airlineId,
+//								carrier,
+//								flightNumber,
+//								origin,
+//								destination,
+//								departureTime,
+//								arrivalTime,
+//								elapsedTime,
+//								airTime,
+//								distance
+//								FROM flightsTable
+//								WHERE (origin = '$from') and (flightDate >= '$lowDate' and departureTime >= '$lowTime') and (flightDate <= '$highDate'  and departureTime <= '$highTime')"""
+//
+//								return listFlights(flightsQuery)
+					  println(s".. calling listFlightsFrom($sc, $from, $lowDateTime, $highDateTime, $degree")
+					  FlightService.listFlightsFrom(sc, from, lowDateTime, highDateTime, degree)
 					}
 	}
 

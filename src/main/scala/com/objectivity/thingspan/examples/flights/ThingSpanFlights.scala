@@ -9,6 +9,7 @@ import org.apache.commons.cli.HelpFormatter
 import com.objectivity.thingspan.examples.flights.query.FlightService
 import org.apache.spark.SparkConf
 import org.apache.spark.SparkContext
+import com.objectivity.thingspan.examples.flights.model.Tools
 
 object ThingSpanFlights {
   	def main(args: Array[String]) = {
@@ -21,6 +22,7 @@ object ThingSpanFlights {
 			options.addOption("t", "test", false, "Test data")
 			options.addOption("m", "master", true, "Spark Master default: local[*]")
 			options.addOption("z", "zulu", false, "Zulu test")
+			options.addOption("s", "schema", false, "Schema creation")
 
 			val parser = new PosixParser()
 			val cl = parser.parse(options, args, false)
@@ -50,6 +52,9 @@ object ThingSpanFlights {
 
 			if (cl.hasOption("v")){
 			  EasyVisual.show()
+			  
+			} else if (cl.hasOption("c")){
+			  Tools.registerClasses()
 			  
 			} else if (cl.hasOption("i")){
 			  LoadData.load()

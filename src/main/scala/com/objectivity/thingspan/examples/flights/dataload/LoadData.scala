@@ -32,6 +32,7 @@ object LoadData {
 			val sqlContext = new SQLContext(sc);
 			import sqlContext.implicits._
 
+			com.objy.db.Objy.startup();
 			  
 			  println("Loading reference data ...")
  
@@ -64,22 +65,22 @@ object LoadData {
   			routesDF.printSchema()
   			
   			airlinesDF.write.mode(SaveMode.Overwrite).
-  			format("com.objy.spark.sql").
-  			option("objy.bootFilePath", AppConfig.Boot).
-  			option("objy.dataClassName", "com.objectivity.thingspan.examples.flights.Airline").
-  			save()
+    			format("com.objy.spark.sql").
+    			option("objy.bootFilePath", AppConfig.Boot).
+    			option("objy.dataClassName", "com.objectivity.thingspan.examples.flights.Airline").
+    			save()
   
   			airportsDF.write.mode(SaveMode.Overwrite).
-  			format("com.objy.spark.sql").
-  			option("objy.bootFilePath", AppConfig.Boot).
-  			option("objy.dataClassName", "com.objectivity.thingspan.examples.flights.Airport").
-  			save()
+    			format("com.objy.spark.sql").
+    			option("objy.bootFilePath", AppConfig.Boot).
+    			option("objy.dataClassName", "com.objectivity.thingspan.examples.flights.Airport").
+    			save()
   
   			routesDF.write.mode(SaveMode.Overwrite).
-  			format("com.objy.spark.sql").
-  			option("objy.bootFilePath", AppConfig.Boot).
-  			option("objy.dataClassName", "com.objectivity.thingspan.examples.flights.Route").
-  			save()
+    			format("com.objy.spark.sql").
+    			option("objy.bootFilePath", AppConfig.Boot).
+    			option("objy.dataClassName", "com.objectivity.thingspan.examples.flights.Route").
+    			save()
   			
    			var stop = java.lang.System.currentTimeMillis()
 
@@ -88,22 +89,22 @@ object LoadData {
        	println("Loading Flights data ...")
        	
        	start = java.lang.System.currentTimeMillis()
-						val flightsCSV = sc.textFile(AppConfig.DataDirectory +"/flights/csv") 
-						val flightsRDD = flightsCSV.map(Flight.flightFromCSV(_))   
-						val flightsCount = flightsRDD.count
+					val flightsCSV = sc.textFile(AppConfig.DataDirectory +"/flights/csv") 
+					val flightsRDD = flightsCSV.map(Flight.flightFromCSV(_))   
+					val flightsCount = flightsRDD.count
 
-						var flightsDF = sqlContext.createDataFrame(flightsRDD)
-						println(s"Flights: $flightsCount")
-						println("Flights schema:")
-						flightsDF.printSchema()
-						flightsDF.write.mode(SaveMode.Overwrite).
+					var flightsDF = sqlContext.createDataFrame(flightsRDD)
+					println(s"Flights: $flightsCount")
+					println("Flights schema:")
+					flightsDF.printSchema()
+					flightsDF.write.mode(SaveMode.Overwrite).
 						format("com.objy.spark.sql").
 						option("objy.bootFilePath", AppConfig.Boot).
 						option("objy.dataClassName", "com.objectivity.thingspan.examples.flights.Flight").
 						save()
-						flightsDF.registerTempTable("flightsTable")
-						stop = java.lang.System.currentTimeMillis()
-						println("Time to ingest Flights" + (flightsCount) + " items is: " + (stop-start) + " ms")
+					flightsDF.registerTempTable("flightsTable")
+					stop = java.lang.System.currentTimeMillis()
+					println("Time to ingest Flights" + (flightsCount) + " items is: " + (stop-start) + " ms")
 
 
 			sc.stop

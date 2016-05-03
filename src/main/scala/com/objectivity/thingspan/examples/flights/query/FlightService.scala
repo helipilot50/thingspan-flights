@@ -3,21 +3,28 @@ package com.objectivity.thingspan.examples.flights.query
 import com.objectivity.thingspan.examples.flights.model.Flight
 import com.objectivity.thingspan.examples.flights.model.Airport
 import com.objectivity.thingspan.examples.flights.model.AppConfig
+
 import com.objy.data.Attribute
-import com.objy.data.Instance
-import com.objy.data.Variable
+import com.objy.data.Instance;
+import com.objy.data.List;
+import com.objy.data.Reference;
+import com.objy.data.Sequence;
+import com.objy.data.Variable;
+
+import com.objy.db.Connection
 import com.objy.db.TransactionMode
 import com.objy.db.TransactionScope
 import com.objy.db.TransactionScopeOption
+
 import com.objy.expression.ExpressionTree
 import com.objy.expression.ExpressionTreeBuilder
 import com.objy.expression.OperatorExpression
 import com.objy.expression.OperatorExpressionBuilder
 import com.objy.expression.language.LanguageRegistry
 import com.objy.statement.Statement
+
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
-import com.objy.db.Connection
 import org.apache.spark.SparkConf
 
 
@@ -36,6 +43,8 @@ object FlightService {
     if (connection == null){
       connection = new Connection(AppConfig.Boot)
     }
+    
+    com.objy.db.Objy.startup();
 
     var flightsRDD = sc.emptyRDD[Flight]
     var airportsRDD = sc.emptyRDD[(String, (Int, Airport))]
@@ -54,43 +63,22 @@ object FlightService {
   
       val destination = flightClass.lookupAttribute("destination");
     
-		  
-			val flightsFrom = airportClass.lookupAttribute("m_Transactions")
+			val flightsFrom = airportClass.lookupAttribute("inboundFlights")
 
 			// build an expression tree
-			var opExp = new OperatorExpressionBuilder("TrailsFrom")
+			var opExp = new OperatorExpressionBuilder("From")
 			// fromObjects
-			.addOperator(new OperatorExpressionBuilder("FROM")
 					.addLiteral(new Variable(airportClass))
 					.addOperator(new OperatorExpressionBuilder("==")
-							.addObjectValue("origin")
-							.addVariable("from")
+							.addObjectValue("IATA")
+							.addLiteral(new Variable(from))
 							)
-					)
-			// Path operand
-			.addOperator(new OperatorExpressionBuilder("FollowedBy")
-					// QualifyStep from Basket to Transaction
-					.addOperator(qualifyStep(0,				// max skip
-							flightClass,					// from object class
-							destination,					// step attribute
-							airportClass))				// to class
-					.addOperator(new OperatorExpressionBuilder("Repeat")
-							// min
-							.addLiteral(new Variable(1))
-							// max
-							.addLiteral(new Variable(degree))
-							)// end Repeat
-
-					).build()
+				  .build()
 					
 			var exprTreeBuilder = new ExpressionTreeBuilder(opExp)
 			var exprTree = exprTreeBuilder.build(LanguageRegistry.lookupLanguage("DO"))
 			println(s"... Expression tree: $exprTree")	
 
-
-			// set variable values in the expression tree
-			exprTree.setVariableValue("from", new Variable(from));
-			
 			//Create a statement
 			var statement = new Statement(exprTree)
 			
@@ -100,7 +88,10 @@ object FlightService {
 			val pathItr = results.sequenceValue().iterator()
 			
 			while(pathItr.hasNext()){
-			  println(pathItr.next())
+			  
+			  val flightInstance = pathItr.next()
+			  
+			  println(flightInstance)
 			}
 			
 			tx.complete();
