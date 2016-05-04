@@ -1,8 +1,14 @@
+import AssemblyKeys._
+
 name := "Flights"
 
 version := "1.0"
 
 scalaVersion := "2.10.6"
+
+mainClass in assembly := Some("com.objectivity.thingspan.examples.flights.ThingSpanFlights")
+
+assemblySettings
 
 javacOptions ++= Seq("-source", "1.7", "-target", "1.7")
 

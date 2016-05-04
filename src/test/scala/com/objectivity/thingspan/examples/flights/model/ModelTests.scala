@@ -8,9 +8,15 @@ import com.objectivity.thingspan.examples.flights.model.Airline
 import com.objectivity.thingspan.examples.flights.model.Flight
 import com.objectivity.thingspan.examples.flights.model.Route
 import com.objectivity.thingspan.examples.flights.model.Tools
+import com.objy.db.Connection
+import com.objy.db.TransactionScopeOption
+import com.objy.db.TransactionMode
+import com.objy.db.TransactionScope
 
 class ModelTests extends FlatSpec {
   
+		val connection = new Connection(AppConfig.Boot);
+
 
   "The Data" should "load Airport from CSV files" in {
  	  Source.fromFile("data/airports/csv/airports.csv").getLines.foreach { line => {
@@ -50,6 +56,27 @@ class ModelTests extends FlatSpec {
   }
   
   "The registration" should "create class definitions" in {
+    com.objy.db.Objy.startup();
     Tools.registerClasses()
+    com.objy.db.Objy.shutdown();
   }
+  
+  it should "Verify class definition" in {
+    com.objy.db.Objy.startup();
+    val connection = new Connection(AppConfig.Boot)
+      val tx = new TransactionScope(TransactionMode.READ_ONLY, 
+		    "spark_read", 
+		    TransactionScopeOption.REQUIRED)
+  
+      assert(Tools.fetchFlightClass()!=null)
+      assert(Tools.fetchAirportClass()!=null)
+      assert(Tools.fetchAirlineClass()!=null)
+      assert(Tools.fetchRouthClass()!=null)
+      
+      tx.complete()
+      com.objy.db.Objy.shutdown();
+  }
+
+  
+  
 }

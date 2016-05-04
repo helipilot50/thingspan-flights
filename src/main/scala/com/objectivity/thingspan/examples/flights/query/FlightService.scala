@@ -1,50 +1,44 @@
 package com.objectivity.thingspan.examples.flights.query
 
 import com.objectivity.thingspan.examples.flights.model.Flight
+import com.objectivity.thingspan.examples.flights.model.Airline
 import com.objectivity.thingspan.examples.flights.model.Airport
+import com.objectivity.thingspan.examples.flights.model.Route
 import com.objectivity.thingspan.examples.flights.model.AppConfig
-
 import com.objy.data.Attribute
-import com.objy.data.Instance;
-import com.objy.data.List;
-import com.objy.data.Reference;
-import com.objy.data.Sequence;
-import com.objy.data.Variable;
-
+import com.objy.data.Instance
+import com.objy.data.List
+import com.objy.data.Reference
+import com.objy.data.Sequence
+import com.objy.data.Variable
 import com.objy.db.Connection
 import com.objy.db.TransactionMode
 import com.objy.db.TransactionScope
 import com.objy.db.TransactionScopeOption
-
 import com.objy.expression.ExpressionTree
 import com.objy.expression.ExpressionTreeBuilder
 import com.objy.expression.OperatorExpression
 import com.objy.expression.OperatorExpressionBuilder
 import com.objy.expression.language.LanguageRegistry
 import com.objy.statement.Statement
-
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
 import org.apache.spark.SparkConf
+import com.objectivity.thingspan.examples.flights.model.Tools
+import com.objectivity.thingspan.examples.flights.model.Airline
 
 
 object FlightService {
+  
+  com.objy.db.Objy.startup();
 
   var connection: Connection = null;
   
-	val FLIGHT_CLASS_NAME = "com.objectivity.thingspan.examples.flights.Flight"
-	val AIRPORT_CLASS_NAME = "com.objectivity.thingspan.examples.flights.Airport"
-	val AIRLINE_CLASS_NAME = "com.objectivity.thingspan.examples.flights.model.Airline"
-	val ROUTE_CLASS_NAME = "com.objectivity.thingspan.examples.flights.model.Route"
-
-
   def listFlightsFrom(sc: SparkContext, from:String, lowDateTime : String, highDateTime : String, degree:Int): (RDD[Flight], RDD[(String, (Int, Airport))]) = {
     println(s"... listFlightsFrom($sc, $from, $lowDateTime, $highDateTime, $degree)")	
     if (connection == null){
       connection = new Connection(AppConfig.Boot)
     }
-    
-    com.objy.db.Objy.startup();
 
     var flightsRDD = sc.emptyRDD[Flight]
     var airportsRDD = sc.emptyRDD[(String, (Int, Airport))]
@@ -55,11 +49,11 @@ object FlightService {
     println(s"... new Tx Scope $tx")	
 		try {
     
-      val  airportClass = com.objy.data.Class.lookupClass(AIRPORT_CLASS_NAME)
-      val  flightClass = com.objy.data.Class.lookupClass(FLIGHT_CLASS_NAME)
-  	  val  airlineClass = com.objy.data.Class.lookupClass(AIRLINE_CLASS_NAME)
-  	  val  routeClass = com.objy.data.Class.lookupClass(ROUTE_CLASS_NAME)
-  	  val  ooObjClass = com.objy.data.Class.lookupClass("ooObj")
+      val  airportClass = com.objy.data.Class.lookupClass(Airport.AIRPORT_CLASS_NAME)
+      val  flightClass = com.objy.data.Class.lookupClass(Flight.FLIGHT_CLASS_NAME)
+//      val  airlineClass = com.objy.data.Class.lookupClass(Airline.AIRLINE_CLASS_NAME)
+//  	  val  routeClass = com.objy.data.Class.lookupClass(Route.ROUTE_CLASS_NAME)
+//      val  ooObjClass = com.objy.data.Class.lookupClass("ooObj")
   
       val destination = flightClass.lookupAttribute("destination");
     

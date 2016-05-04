@@ -15,7 +15,9 @@ import com.objy.data.dataSpecificationBuilder.IntegerSpecificationBuilder
 import com.objy.data.Encoding
 import com.objy.data.dataSpecificationBuilder.ReferenceSpecificationBuilder
 import com.objy.data.DataSpecification
+import com.objy.data.Class
 import com.objy.data.dataSpecificationBuilder.ListSpecificationBuilder
+import com.objy.db.Connection
 
 trait FlightsEdge
 trait FlightsVertex
@@ -36,6 +38,8 @@ case class Airline (
 ) extends FlightsVertex 
 
 object Airline {
+	val AIRLINE_CLASS_NAME = "com.objectivity.thingspan.examples.flights.model.Airline"
+
 	def airlineFromCSV(source: String): Airline = {
 
 			val p = source.split(",").map(_.trim)
@@ -55,6 +59,7 @@ object Airline {
 
 
 case class Airport (
+    
 
 		@BeanProperty var airportId: Int,	// Unique identifier for this airport.
 		@BeanProperty var name: String,			// Name of airport. May or may not contain the City name.
@@ -71,7 +76,8 @@ case class Airport (
 		) extends FlightsVertex
 
 object Airport {
-  
+ 	val AIRPORT_CLASS_NAME = "com.objectivity.thingspan.examples.flights.Airport"
+ 
   def enptyAirport(): Airport = {
 					Airport(0,  
 							null,       
@@ -122,7 +128,9 @@ case class Route (
 ) extends FlightsVertex
     
 object Route {
-	def routeFromCSV(source: String): Route = {
+	val ROUTE_CLASS_NAME = "com.objectivity.thingspan.examples.flights.model.Route"
+
+  def routeFromCSV(source: String): Route = {
 			val p = source.split(",").map(_.trim)
 			
 			Route(p(0),  
@@ -160,6 +168,9 @@ case class Flight (
 
 object Flight {
   
+  val FLIGHT_CLASS_NAME = "com.objectivity.thingspan.examples.flights.Flight"
+
+    
 	def flightFromCSV(source: String): Flight = {
 			val Pattern = """^\d+,(\d+),(\d+),(\d\d\d\d/\d\d/\d\d),(\d+),(\w\w),(\d+),\d+,(\w\w\w),.+?,.+?,(\w\w\w),.+?,.+?,(\d+),(\d+),(\d+),(\d+),(\d+)""".r
 
@@ -212,6 +223,8 @@ object AppConfig {
 
 
 object Tools {
+  com.objy.db.Objy.startup();
+  
   def ltrimQuotes(s: String) = s.replaceAll("^\\\"", "")
   def rtrimQuotes(s: String) = s.replaceAll("\"$", "")
   def trimQuotes(s: String) = rtrimQuotes(ltrimQuotes(s))
@@ -221,6 +234,8 @@ object Tools {
    */
   def registerClasses() {
     
+    val  connection = new Connection(AppConfig.Boot)
+    
     println("Flights Register Classes");
 
 			
@@ -228,10 +243,8 @@ object Tools {
 			val txScope = new TransactionScope(TransactionMode.READ_UPDATE)
 			
 			try {
-			  println("\tRegister Classes")
 			  val flightClassBuilder = new ClassBuilder(
-                 "com.objectivity.thingspan.examples.flights.model.Flight")
-              .setSuperclass("ooObj")
+                Flight.FLIGHT_CLASS_NAME).setSuperclass("ooObj")
               .addAttribute(LogicalType.INTEGER, "year")
               .addAttribute(LogicalType.INTEGER, "dayOfMonth")
               .addAttribute(LogicalType.STRING, "flightDate")
@@ -242,18 +255,17 @@ object Tools {
               .addAttribute(LogicalType.STRING, "destination")
               .addAttribute(LogicalType.STRING, "departureTime")
               .addAttribute(LogicalType.STRING, "arrivalTime")
-              .addAttribute(LogicalType.INTEGER, "arrivalTime")
+              .addAttribute(LogicalType.INTEGER, "elapsedTime")
               .addAttribute(LogicalType.INTEGER, "airTime")
               .addAttribute(LogicalType.INTEGER, "distance")
 		    
-        addToOne(flightClassBuilder, "to", "com.objectivity.thingspan.examples.flights.model.Airport", "inboundFlights");
-        addToOne(flightClassBuilder, "from", "com.objectivity.thingspan.examples.flights.model.Airport", "outboundFlights");
+        addToOne(flightClassBuilder, "to", Airport.AIRPORT_CLASS_NAME, "inboundFlights");
+        addToOne(flightClassBuilder, "from", Airport.AIRPORT_CLASS_NAME, "outboundFlights");
         
    	    println("\tCreated Flight schema");
 
    	    val airportClassBuilder = new ClassBuilder(
-                 "com.objectivity.thingspan.examples.flights.model.Airport")
-              .setSuperclass("ooObj")
+                 Airport.AIRPORT_CLASS_NAME).setSuperclass("ooObj")
               .addAttribute(LogicalType.INTEGER, "airportId")
               .addAttribute(LogicalType.STRING, "name")
               .addAttribute(LogicalType.STRING, "city")
@@ -268,13 +280,12 @@ object Tools {
               .addAttribute(LogicalType.STRING, "tz")
               .addAttribute(LogicalType.INTEGER, "distance")
 		    
-        addToMany(airportClassBuilder, "inboundFlights", "com.objectivity.thingspan.examples.flights.model.Flight", "to");
-        addToMany(airportClassBuilder, "outboundFlights", "com.objectivity.thingspan.examples.flights.model.Flight", "from");
+        addToMany(airportClassBuilder, "inboundFlights", Flight.FLIGHT_CLASS_NAME, "to");
+        addToMany(airportClassBuilder, "outboundFlights", Flight.FLIGHT_CLASS_NAME, "from");
    	    println("\tCreated Airport schema");
 
       val airlineClassBuilder = new ClassBuilder(
-                   "com.objectivity.thingspan.examples.flights.model.Airline")
-              .setSuperclass("ooObj")
+                   Airline.AIRLINE_CLASS_NAME).setSuperclass("ooObj")
           		.addAttribute(LogicalType.INTEGER, "airlineId")
           		.addAttribute(LogicalType.STRING, "name:")
           		.addAttribute(LogicalType.STRING, "alias")
@@ -286,8 +297,7 @@ object Tools {
       println("\tCreated Airline schema")
           		
       val routeClassBuilder = new ClassBuilder(
-                   "com.objectivity.thingspan.examples.flights.model.Route")
-              .setSuperclass("ooObj")
+                   Route.ROUTE_CLASS_NAME).setSuperclass("ooObj")
               .addAttribute(LogicalType.STRING, "airline")
               .addAttribute(LogicalType.INTEGER, "airlineId")
               .addAttribute(LogicalType.STRING, "sourceAirport")
@@ -300,21 +310,46 @@ object Tools {
       println("\tCreated Route schema")
       
       val flightClass = flightClassBuilder.build();
+       println(flightClass.getName)
       val airportClass = airportClassBuilder.build();
+       println(airportClass.getName)
       val airlineClass = airlineClassBuilder.build();
+       println(airlineClass.getName)
       val routeClass = routeClassBuilder.build();
+       println(routeClass.getName)
              
-      provider.represent(flightClass);
+      provider.represent(flightClass)
       provider.represent(airportClass);
       provider.represent(airlineClass);
       provider.represent(routeClass);
 
-       txScope.complete();
+      txScope.complete()
+      
+      if (com.objy.data.Class.lookupClass(airlineClass.getName) == null)
+        println("nothing created")
+      
 		} catch {
   			case  e: Exception => {
+  			  txScope.close()
     			e.printStackTrace();
     		}
-     } 
+    } 
+  }
+  
+  def fetchAirlineClass():Class = {
+     com.objy.data.Class.lookupClass(Airline.AIRLINE_CLASS_NAME)
+  }
+  
+  def fetchAirportClass():Class = {
+     com.objy.data.Class.lookupClass(Airport.AIRPORT_CLASS_NAME)
+  }
+  
+  def fetchFlightClass():Class = {
+     com.objy.data.Class.lookupClass(Flight.FLIGHT_CLASS_NAME)
+  }
+  
+  def fetchRouthClass():Class = {
+     com.objy.data.Class.lookupClass(Route.ROUTE_CLASS_NAME)
   }
   
   	/**
