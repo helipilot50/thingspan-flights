@@ -13,9 +13,10 @@ import com.objy.db.TransactionScopeOption
 import com.objy.db.TransactionMode
 import com.objy.db.TransactionScope
 import org.scalatest.Ignore
+import com.objy.db.Transaction
 
 
-@Ignore
+
 class ModelTests extends FlatSpec {
   
 		val connection = new Connection(AppConfig.Boot);
@@ -59,24 +60,23 @@ class ModelTests extends FlatSpec {
   }
   
   "The registration" should "create class definitions" in {
-    com.objy.db.Objy.startup();
+    com.objy.db.Objy.startup()
+    val connection = new Connection(AppConfig.Boot)
     Tools.registerClasses()
-    com.objy.db.Objy.shutdown();
+    com.objy.db.Objy.shutdown()
   }
   
   it should "Verify class definition" in {
     com.objy.db.Objy.startup();
     val connection = new Connection(AppConfig.Boot)
-      val tx = new TransactionScope(TransactionMode.READ_ONLY, 
-		    "spark_read", 
-		    TransactionScopeOption.REQUIRED)
+      val tx = new Transaction(TransactionMode.READ_ONLY)
   
       assert(Tools.fetchFlightClass()!=null)
       assert(Tools.fetchAirportClass()!=null)
       assert(Tools.fetchAirlineClass()!=null)
-      assert(Tools.fetchRouthClass()!=null)
+      assert(Tools.fetchRouteClass()!=null)
       
-      tx.complete()
+      tx.commit()
       com.objy.db.Objy.shutdown();
   }
 

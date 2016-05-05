@@ -75,9 +75,6 @@ object Relationships {
   						option("objy.updateByOid", "flightOid").
   						save() 
 					
-    				/*
-    				 * Spark SQL for destination airport and flight
-    				 */
 				val flightDestinationJoin = new StringBuilder()
 					flightDestinationJoin.append("SELECT airportOid, flightOid "); 
   				flightDestinationJoin.append("from flightsTable inner join airportsTable ");    
@@ -91,7 +88,7 @@ object Relationships {
 						println("*** Writing destinations to ThingSpan")
 				flightDestinationDF.write.
 						mode(SaveMode.Overwrite).
-  						format("com.objy.spark.sql").
+  					format("com.objy.spark.sql").
   						option("objy.bootFilePath", AppConfig.Boot).
   						option("objy.dataClassName", "com.objectivity.thingspan.examples.flights.Flight").
   						option("objy.updateByOid", "flightOid").

@@ -26,6 +26,7 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.SparkConf
 import com.objectivity.thingspan.examples.flights.model.Tools
 import com.objectivity.thingspan.examples.flights.model.Airline
+import com.objy.db.Transaction
 
 
 object FlightService {
@@ -43,14 +44,13 @@ object FlightService {
     var flightsRDD = sc.emptyRDD[Flight]
     var airportsRDD = sc.emptyRDD[(String, (Int, Airport))]
     
-    val tx = new TransactionScope(TransactionMode.READ_ONLY, 
-		    "spark_read", 
-		    TransactionScopeOption.REQUIRED)
-    println(s"... new Tx Scope $tx")	
+    val tx = new Transaction(TransactionMode.READ_ONLY)
+    println(s"... new Tx $tx")	
 		try {
     
-      val  airportClass = com.objy.data.Class.lookupClass(Airport.AIRPORT_CLASS_NAME)
-      val  flightClass = com.objy.data.Class.lookupClass(Flight.FLIGHT_CLASS_NAME)
+      val  airportClass = Tools.fetchAirportClass()
+      val  flightClass = Tools.fetchFlightClass()
+      
 //      val  airlineClass = com.objy.data.Class.lookupClass(Airline.AIRLINE_CLASS_NAME)
 //  	  val  routeClass = com.objy.data.Class.lookupClass(Route.ROUTE_CLASS_NAME)
 //      val  ooObjClass = com.objy.data.Class.lookupClass("ooObj")
@@ -69,9 +69,9 @@ object FlightService {
 							)
 				  .build()
 					
-			var exprTreeBuilder = new ExpressionTreeBuilder(opExp)
-			var exprTree = exprTreeBuilder.build(LanguageRegistry.lookupLanguage("DO"))
-			println(s"... Expression tree: $exprTree")	
+			var exprTree = new ExpressionTreeBuilder(opExp)
+			   .build(LanguageRegistry.lookupLanguage("DO"))
+			//println(s"... Expression tree: $exprTree")	
 
 			//Create a statement
 			var statement = new Statement(exprTree)
@@ -83,18 +83,18 @@ object FlightService {
 			
 			while(pathItr.hasNext()){
 			  
-			  val flightInstance = pathItr.next()
-			  
-			  println(flightInstance)
+			  val airportInstance = pathItr.next().instanceValue()
+			  val airportIata = airportInstance.getAttributeValue("IATA").stringValue()
+			  val airportName = airportInstance.getAttributeValue("name").stringValue()
+			  val airportCity = airportInstance.getAttributeValue("city").stringValue()
+			  println(s"... Result: $airportIata - $airportName in $airportCity")
+			  val outboundFlights = airportInstance.getAttributeValue("outboundFlights").listValue()
+			  val size = outboundFlights.size()
+			   println(s"... outbound: $outboundFlights $size")
 			}
 			
-			tx.complete();
+			tx.commit();
 			
-		} catch {
-		case ex: Exception => {
-  			println("Exception Thrown - " + ex.getMessage)
-  			println(ex.printStackTrace())
-  		}
 		} finally{
 		  tx.close()
 		}

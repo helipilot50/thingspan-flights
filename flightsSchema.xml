@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ObjyXml
+  timeStamp="2188742907"
+>
+  <Fd>
+    <Schema>
+      <Module name="Default" isDefault="true" schemaNumber="0">
+        <NameSpace name="Default" isDefault="true">
+        </NameSpace>
+        <NameSpace name="objy.placement" isDefault="false">
+        </NameSpace>
+        <NameSpace name="infinitegraph.impl" isDefault="false">
+        </NameSpace>
+        <NameSpace name="infinitegraph.impl.plugins.pbp.pipelining" isDefault="false">
+        </NameSpace>
+        <NameSpace name="infinitegraph" isDefault="false">
+        </NameSpace>
+        <NameSpace name="com.objectivity.thingspan.examples.flights" isDefault="false">
+          <Class name="Airport"
+            typeNumber="1000000" versionNumber="1"
+            isInternal="false" markedDeleted="false"
+          >
+            <Shape id="1" name="Airport"
+              shapeNumber="1000000" isLatestShape="true" hasVirtualTable="false"
+            >
+              <Bases>
+                <BaseShape baseShapeName="ooObj" baseShapeNumber="1001"
+                  id="1" visibility="public"
+                />
+              </Bases>
+              <Members>
+                <BasicMember name="airportId" id="2"
+                  position="1" visibility="private" arraySize="1" isVariableArray="false"
+                  type="int32" defaultIntValue="0"
+                />
+                <StringMember name="name" id="3"
+                  position="2" visibility="private" arraySize="1" isVariableArray="false"
+                  type="utf16String" fixedLength="0"
+                />
+                <StringMember name="city" id="4"
+                  position="3" visibility="private" arraySize="1" isVariableArray="false"
+                  type="utf16String" fixedLength="0"
+                />
+                <StringMember name="country" id="5"
+                  position="4" visibility="private" arraySize="1" isVariableArray="false"
+                  type="utf16String" fixedLength="0"
+                />
+                <StringMember name="IATA" id="6"
+                  position="5" visibility="private" arraySize="1" isVariableArray="false"
+                  type="utf16String" fixedLength="0"
+                />
+                <StringMember name="ICAO" id="7"
+                  position="6" visibility="private" arraySize="1" isVariableArray="false"
+                  type="utf16String" fixedLength="0"
+                />
+                <BasicMember name="latitude" id="8"
+                  position="7" visibility="private" arraySize="1" isVariableArray="false"
+                  type="float64" defaultValueDump="0000000000000000"
+                />
+                <BasicMember name="longitude" id="9"
+                  position="8" visibility="private" arraySize="1" isVariableArray="false"
+                  type="float64" defaultValueDump="0000000000000000"
+                />
+                <BasicMember name="altitude" id="10"
+                  position="9" visibility="private" arraySize="1" isVariableArray="false"
+                  type="int32" defaultIntValue="0"
+                />
+                <BasicMember name="timezone" id="11"
+                  position="10" visibility="private" arraySize="1" isVariableArray="false"
+                  type="float64" defaultValueDump="0000000000000000"
+                />
+                <StringMember name="DST" id="12"
+                  position="11" visibility="private" arraySize="1" isVariableArray="false"
+                  type="utf16String" fixedLength="0"
+                />
+                <StringMember name="tz" id="13"
+                  position="12" visibility="private" arraySize="1" isVariableArray="false"
+                  type="utf16String" fixedLength="0"
+                />
+                <BasicMember name="distance" id="14"
+                  position="13" visibility="private" arraySize="1" isVariableArray="false"
+                  type="int32" defaultIntValue="0"
+                />
+                <RelationshipMember name="inboundFlights" id="15"
+                  position="14" visibility="private" arraySize="1" isVariableArray="false"
+                  referencedShapeNumber="1000001" isBidirectional="true"
+                  inverseIsToMany="false" inverseMemberId="15" inverseMemberName="to"
+                  isToMany="true" isShort="false" isInline="true"
+                  propagateDelete="false" propagateLocks="false"
+                  copyPolicy="drop" versionPolicy="drop"
+                  encodedRelationshipNumber="604979776"
+                />
+                <RelationshipMember name="outboundFlights" id="16"
+                  position="15" visibility="private" arraySize="1" isVariableArray="false"
+                  referencedShapeNumber="1000001" isBidirectional="true"
+                  inverseIsToMany="false" inverseMemberId="16" inverseMemberName="from"
+                  isToMany="true" isShort="false" isInline="true"
+                  propagateDelete="false" propagateLocks="false"
+                  copyPolicy="drop" versionPolicy="drop"
+                  encodedRelationshipNumber="604979777"
+                />
+              </Members>
+            </Shape>
+          </Class>
+          <Class name="Flight"
+            typeNumber="1000001" versionNumber="1"
+            isInternal="false" markedDeleted="false"
+          >
+            <Shape id="1" name="Flight"
+              shapeNumber="1000001" isLatestShape="true" hasVirtualTable="false"
+            >
+              <Bases>
+                <BaseShape baseShapeName="ooObj" baseShapeNumber="1001"
+                  id="1" visibility="public"
+                />
+              </Bases>
+              <Members>
+                <BasicMember name="year" id="2"
+                  position="1" visibility="private" arraySize="1" isVariableArray="false"
+                  type="int32" defaultIntValue="0"
+                />
+                <BasicMember name="dayOfMonth" id="3"
+                  position="2" visibility="private" arraySize="1" isVariableArray="false"
+                  type="int32" defaultIntValue="0"
+                />
+                <StringMember name="flightDate" id="4"
+                  position="3" visibility="private" arraySize="1" isVariableArray="false"
+                  type="utf16String" fixedLength="0"
+                />
+                <BasicMember name="airlineId" id="5"
+                  position="4" visibility="private" arraySize="1" isVariableArray="false"
+                  type="int32" defaultIntValue="0"
+                />
+                <StringMember name="carrier" id="6"
+                  position="5" visibility="private" arraySize="1" isVariableArray="false"
+                  type="utf16String" fixedLength="0"
+                />
+                <BasicMember name="flightNumber" id="7"
+                  position="6" visibility="private" arraySize="1" isVariableArray="false"
+                  type="int32" defaultIntValue="0"
+                />
+                <StringMember name="origin" id="8"
+                  position="7" visibility="private" arraySize="1" isVariableArray="false"
+                  type="utf16String" fixedLength="0"
+                />
+                <StringMember name="destination" id="9"
+                  position="8" visibility="private" arraySize="1" isVariableArray="false"
+                  type="utf16String" fixedLength="0"
+                />
+                <StringMember name="departureTime" id="10"
+                  position="9" visibility="private" arraySize="1" isVariableArray="false"
+                  type="utf16String" fixedLength="0"
+                />
+                <StringMember name="arrivalTime" id="11"
+                  position="10" visibility="private" arraySize="1" isVariableArray="false"
+                  type="utf16String" fixedLength="0"
+                />
+                <BasicMember name="elapsedTime" id="12"
+                  position="11" visibility="private" arraySize="1" isVariableArray="false"
+                  type="int32" defaultIntValue="0"
+                />
+                <BasicMember name="airTime" id="13"
+                  position="12" visibility="private" arraySize="1" isVariableArray="false"
+                  type="int32" defaultIntValue="0"
+                />
+                <BasicMember name="distance" id="14"
+                  position="13" visibility="private" arraySize="1" isVariableArray="false"
+                  type="int32" defaultIntValue="0"
+                />
+                <RelationshipMember name="to" id="15"
+                  position="14" visibility="private" arraySize="1" isVariableArray="false"
+                  referencedShapeNumber="1000000" isBidirectional="true"
+                  inverseIsToMany="true" inverseMemberId="15" inverseMemberName="inboundFlights"
+                  isToMany="false" isShort="false" isInline="true"
+                  propagateDelete="false" propagateLocks="false"
+                  copyPolicy="drop" versionPolicy="drop"
+                  encodedRelationshipNumber="403653184"
+                />
+                <RelationshipMember name="from" id="16"
+                  position="15" visibility="private" arraySize="1" isVariableArray="false"
+                  referencedShapeNumber="1000000" isBidirectional="true"
+                  inverseIsToMany="true" inverseMemberId="16" inverseMemberName="outboundFlights"
+                  isToMany="false" isShort="false" isInline="true"
+                  propagateDelete="false" propagateLocks="false"
+                  copyPolicy="drop" versionPolicy="drop"
+                  encodedRelationshipNumber="403653185"
+                />
+              </Members>
+            </Shape>
+          </Class>
+        </NameSpace>
+        <NameSpace name="com.objectivity.thingspan.examples.flights.model" isDefault="false">
+          <Class name="Airline"
+            typeNumber="1000002" versionNumber="1"
+            isInternal="false" markedDeleted="false"
+          >
+            <Shape id="1" name="Airline"
+              shapeNumber="1000002" isLatestShape="true" hasVirtualTable="false"
+            >
+              <Bases>
+                <BaseShape baseShapeName="ooObj" baseShapeNumber="1001"
+                  id="1" visibility="public"
+                />
+              </Bases>
+              <Members>
+                <BasicMember name="airlineId" id="2"
+                  position="1" visibility="private" arraySize="1" isVariableArray="false"
+                  type="int32" defaultIntValue="0"
+                />
+                <StringMember name="name:" id="3"
+                  position="2" visibility="private" arraySize="1" isVariableArray="false"
+                  type="utf16String" fixedLength="0"
+                />
+                <StringMember name="alias" id="4"
+                  position="3" visibility="private" arraySize="1" isVariableArray="false"
+                  type="utf16String" fixedLength="0"
+                />
+                <StringMember name="IATA" id="5"
+                  position="4" visibility="private" arraySize="1" isVariableArray="false"
+                  type="utf16String" fixedLength="0"
+                />
+                <StringMember name="ICAO" id="6"
+                  position="5" visibility="private" arraySize="1" isVariableArray="false"
+                  type="utf16String" fixedLength="0"
+                />
+                <StringMember name="callsign" id="7"
+                  position="6" visibility="private" arraySize="1" isVariableArray="false"
+                  type="utf16String" fixedLength="0"
+                />
+                <StringMember name="country" id="8"
+                  position="7" visibility="private" arraySize="1" isVariableArray="false"
+                  type="utf16String" fixedLength="0"
+                />
+                <StringMember name="active" id="9"
+                  position="8" visibility="private" arraySize="1" isVariableArray="false"
+                  type="utf16String" fixedLength="0"
+                />
+              </Members>
+            </Shape>
+          </Class>
+          <Class name="Route"
+            typeNumber="1000003" versionNumber="1"
+            isInternal="false" markedDeleted="false"
+          >
+            <Shape id="1" name="Route"
+              shapeNumber="1000003" isLatestShape="true" hasVirtualTable="false"
+            >
+              <Bases>
+                <BaseShape baseShapeName="ooObj" baseShapeNumber="1001"
+                  id="1" visibility="public"
+                />
+              </Bases>
+              <Members>
+                <StringMember name="airline" id="2"
+                  position="1" visibility="private" arraySize="1" isVariableArray="false"
+                  type="utf16String" fixedLength="0"
+                />
+                <BasicMember name="airlineId" id="3"
+                  position="2" visibility="private" arraySize="1" isVariableArray="false"
+                  type="int32" defaultIntValue="0"
+                />
+                <StringMember name="sourceAirport" id="4"
+                  position="3" visibility="private" arraySize="1" isVariableArray="false"
+                  type="utf16String" fixedLength="0"
+                />
+                <BasicMember name="sourceAirportId" id="5"
+                  position="4" visibility="private" arraySize="1" isVariableArray="false"
+                  type="int32" defaultIntValue="0"
+                />
+                <StringMember name="destinationAirport" id="6"
+                  position="5" visibility="private" arraySize="1" isVariableArray="false"
+                  type="utf16String" fixedLength="0"
+                />
+                <BasicMember name="destinationAirportId" id="7"
+                  position="6" visibility="private" arraySize="1" isVariableArray="false"
+                  type="int32" defaultIntValue="0"
+                />
+                <StringMember name="codeshare" id="8"
+                  position="7" visibility="private" arraySize="1" isVariableArray="false"
+                  type="utf16String" fixedLength="0"
+                />
+                <BasicMember name="stops" id="9"
+                  position="8" visibility="private" arraySize="1" isVariableArray="false"
+                  type="int32" defaultIntValue="0"
+                />
+                <StringMember name="equipment" id="10"
+                  position="9" visibility="private" arraySize="1" isVariableArray="false"
+                  type="utf16String" fixedLength="0"
+                />
+              </Members>
+            </Shape>
+          </Class>
+        </NameSpace>
+      </Module>
+    </Schema>
+  </Fd>
+</ObjyXml>

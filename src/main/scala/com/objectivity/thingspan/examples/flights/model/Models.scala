@@ -1,23 +1,20 @@
 package com.objectivity.thingspan.examples.flights.model
 
 import scala.beans.BeanProperty
-import com.objy.db.DatabaseNotFoundException
-import com.objy.db.ObjyRuntimeException
-import com.objy.db.DatabaseClosedException
-import com.objy.db.DatabaseOpenException
-import com.objy.data.schemaProvider.SchemaProvider
-import com.objy.db.TransactionMode
-import com.objy.db.TransactionScope
+
+import com.objy.data.Class
 import com.objy.data.ClassBuilder
+import com.objy.data.DataSpecification
+import com.objy.data.Encoding
+import com.objy.data.Instance
 import com.objy.data.LogicalType
 import com.objy.data.Storage
 import com.objy.data.dataSpecificationBuilder.IntegerSpecificationBuilder
-import com.objy.data.Encoding
-import com.objy.data.dataSpecificationBuilder.ReferenceSpecificationBuilder
-import com.objy.data.DataSpecification
-import com.objy.data.Class
 import com.objy.data.dataSpecificationBuilder.ListSpecificationBuilder
-import com.objy.db.Connection
+import com.objy.data.dataSpecificationBuilder.ReferenceSpecificationBuilder
+import com.objy.data.schemaProvider.SchemaProvider
+import com.objy.db.Transaction
+import com.objy.db.TransactionMode
 
 trait FlightsEdge
 trait FlightsVertex
@@ -53,6 +50,18 @@ object Airline {
 							Tools.trimQuotes(p(6)),       
 							Tools.trimQuotes(p(7))       
 							)
+	}
+	
+	def toPersistant(airline: Airline): Instance = {
+	     var airlineInstance = Instance.createPersistent(Tools.fetchAirlineClass());
+       airlineInstance.getAttributeValue("airlineId").set(airline.airlineId);
+       airlineInstance.getAttributeValue("name").set(airline.name);
+       airlineInstance.getAttributeValue("alias").set(airline.alias);
+       airlineInstance.getAttributeValue("IATA").set(airline.IATA);
+       airlineInstance.getAttributeValue("ICAO").set(airline.ICAO);
+       airlineInstance.getAttributeValue("country").set(airline.country);
+       airlineInstance.getAttributeValue("active").set(airline.active);
+       airlineInstance
 	}
 }
 
@@ -92,9 +101,26 @@ object Airport {
 							null,
 							null
 							)
-      
   }
   
+ 		def toPersistant(airport: Airport): Instance = {
+	     var airportInstance = Instance.createPersistent(Tools.fetchAirportClass());
+       airportInstance.getAttributeValue("airportId").set(airport.airportId);
+       airportInstance.getAttributeValue("name").set(airport.name);
+       airportInstance.getAttributeValue("city").set(airport.city);
+       airportInstance.getAttributeValue("country").set(airport.country);
+       airportInstance.getAttributeValue("IATA").set(airport.IATA);
+       airportInstance.getAttributeValue("ICAO").set(airport.ICAO);
+       airportInstance.getAttributeValue("latitude").set(airport.latitude);
+       airportInstance.getAttributeValue("longitude").set(airport.longitude);
+       airportInstance.getAttributeValue("altitude").set(airport.altitude);
+       airportInstance.getAttributeValue("timezone").set(airport.timezone);
+       airportInstance.getAttributeValue("DST").set(airport.DST);
+       airportInstance.getAttributeValue("tz").set(airport.tz);
+       airportInstance
+	}
+
+ 	
 	def airportFromCSV(source: String): Airport = {
 
 			val p = source.split(",").map(_.trim)
@@ -129,7 +155,19 @@ case class Route (
     
 object Route {
 	val ROUTE_CLASS_NAME = "com.objectivity.thingspan.examples.flights.model.Route"
-
+  def toPersistant(route: Route): Instance = {
+	     var routeInstance = Instance.createPersistent(Tools.fetchRouteClass());
+	     routeInstance.getAttributeValue("airline").set(route.airline);
+	     routeInstance.getAttributeValue("airlineId").set(route.airlineId);
+	     routeInstance.getAttributeValue("sourceAirport").set(route.sourceAirport);
+	     routeInstance.getAttributeValue("sourceAirportId").set(route.sourceAirportId);
+	     routeInstance.getAttributeValue("destinationAirport").set(route.destinationAirport);
+	     routeInstance.getAttributeValue("destinationAirportId").set(route.destinationAirportId);
+	     routeInstance.getAttributeValue("codeshare").set(route.codeshare);
+	     routeInstance.getAttributeValue("stops").set(route.stops);
+	     routeInstance.getAttributeValue("equipment").set(route.equipment);
+	     routeInstance
+	}
   def routeFromCSV(source: String): Route = {
 			val p = source.split(",").map(_.trim)
 			
@@ -170,7 +208,24 @@ object Flight {
   
   val FLIGHT_CLASS_NAME = "com.objectivity.thingspan.examples.flights.Flight"
 
-    
+  def toPersistant(flight: Flight): Instance = {
+    var flightInstance = Instance.createPersistent(Tools.fetchFlightClass());
+    flightInstance.getAttributeValue("year").set(flight.year);
+    flightInstance.getAttributeValue("dayOfMonth").set(flight.dayOfMonth);
+    flightInstance.getAttributeValue("flightDate").set(flight.flightDate);
+    flightInstance.getAttributeValue("airlineId").set(flight.airlineId);
+    flightInstance.getAttributeValue("carrier").set(flight.carrier);
+    flightInstance.getAttributeValue("flightNumber").set(flight.flightNumber);
+    flightInstance.getAttributeValue("origin").set(flight.origin);
+    flightInstance.getAttributeValue("destination").set(flight.destination);
+    flightInstance.getAttributeValue("departureTime").set(flight.departureTime);
+    flightInstance.getAttributeValue("arrivalTime").set(flight.arrivalTime);
+    flightInstance.getAttributeValue("elapsedTime").set(flight.elapsedTime);
+    flightInstance.getAttributeValue("airTime").set(flight.airTime);
+    flightInstance.getAttributeValue("distance").set(flight.distance);
+    flightInstance
+  }
+  
 	def flightFromCSV(source: String): Flight = {
 			val Pattern = """^\d+,(\d+),(\d+),(\d\d\d\d/\d\d/\d\d),(\d+),(\w\w),(\d+),\d+,(\w\w\w),.+?,.+?,(\w\w\w),.+?,.+?,(\d+),(\d+),(\d+),(\d+),(\d+)""".r
 
@@ -233,15 +288,15 @@ object Tools {
    */
   def registerClasses() {
     
-    com.objy.db.Objy.startup();
-    val  connection = new Connection(AppConfig.Boot)
     
     println("Flights Register Classes");
 
-			
+			val floatSpec = new com.objy.data.dataSpecificationBuilder.RealSpecificationBuilder(Storage.Real.B64)
+                  .setEncoding(Encoding.Real.IEEE)
+                  .build();
+                  
 			val provider = SchemaProvider.getDefaultPersistentProvider()
-			val txScope = new TransactionScope(TransactionMode.READ_UPDATE)
-			
+			var tx = new Transaction(TransactionMode.READ_UPDATE)
 			try {
 			  val flightClassBuilder = new ClassBuilder(
                 Flight.FLIGHT_CLASS_NAME).setSuperclass("ooObj")
@@ -272,10 +327,13 @@ object Tools {
               .addAttribute(LogicalType.STRING, "country")
               .addAttribute(LogicalType.STRING, "IATA")
               .addAttribute(LogicalType.STRING, "ICAO")
-              .addAttribute(LogicalType.REAL, "latitude")
-              .addAttribute(LogicalType.REAL, "longitude")
+              //.addAttribute(LogicalType.REAL, "latitude")
+              .addAttribute("latitude", floatSpec)
+              //.addAttribute(LogicalType.REAL, "longitude")
+   	          .addAttribute("longitude", floatSpec)
               .addAttribute(LogicalType.INTEGER, "altitude")
-              .addAttribute(LogicalType.REAL, "timezone")
+              //.addAttribute(LogicalType.REAL, "timezone")
+              .addAttribute("timezone", floatSpec)
               .addAttribute(LogicalType.STRING, "DST")
               .addAttribute(LogicalType.STRING, "tz")
               .addAttribute(LogicalType.INTEGER, "distance")
@@ -323,17 +381,17 @@ object Tools {
       provider.represent(airlineClass);
       provider.represent(routeClass);
 
-      txScope.complete()
+      tx.commit()
       
-      if (com.objy.data.Class.lookupClass(airlineClass.getName) == null)
-        println("nothing created")
       
 		} catch {
   			case  e: Exception => {
-  			  txScope.close()
+  			  tx.abort()
     			e.printStackTrace();
     		}
-    } 
+    } finally {
+  			  tx.close()
+    }
   }
   
   def fetchAirlineClass():Class = {
@@ -348,7 +406,7 @@ object Tools {
      com.objy.data.Class.lookupClass(Flight.FLIGHT_CLASS_NAME)
   }
   
-  def fetchRouthClass():Class = {
+  def fetchRouteClass():Class = {
      com.objy.data.Class.lookupClass(Route.ROUTE_CLASS_NAME)
   }
   

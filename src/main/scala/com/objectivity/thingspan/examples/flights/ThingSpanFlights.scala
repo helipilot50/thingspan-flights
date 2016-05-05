@@ -57,7 +57,7 @@ object ThingSpanFlights {
 			  Tools.registerClasses()
 			  
 			} else if (cl.hasOption("i")){
-			  LoadData.load()
+			  LoadData.loadSpark()
 			  
 			} else 	if (cl.hasOption("r")){
 			  Relationships.load()

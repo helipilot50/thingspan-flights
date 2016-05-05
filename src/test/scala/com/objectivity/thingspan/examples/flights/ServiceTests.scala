@@ -6,7 +6,7 @@ import org.apache.spark.SparkConf
 import org.apache.spark.SparkContext
 import org.scalatest.Ignore
 
-@Ignore
+
 class ServiceTests extends FlatSpec {
     "The Flignts service" should "find an Airport from IATA id and all the flights" in {
       var conf = new SparkConf().setMaster("local[*]")
