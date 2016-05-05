@@ -12,7 +12,10 @@ import com.objy.db.Connection
 import com.objy.db.TransactionScopeOption
 import com.objy.db.TransactionMode
 import com.objy.db.TransactionScope
+import org.scalatest.Ignore
 
+
+@Ignore
 class ModelTests extends FlatSpec {
   
 		val connection = new Connection(AppConfig.Boot);
