@@ -175,26 +175,26 @@ class EasyVisual(sc : SparkContext, sqlContext : SQLContext) {
 						val flights = TestData.aLotOfFlightsFrom(sc, from, lowDate, lowTime, highDate, highTime)
 								return (flights, graphAirports(flights))
 					} else {
-//						val flightsQuery = s"""SELECT
-//								year,
-//								dayOfMonth,
-//								flightDate,
-//								airlineId,
-//								carrier,
-//								flightNumber,
-//								origin,
-//								destination,
-//								departureTime,
-//								arrivalTime,
-//								elapsedTime,
-//								airTime,
-//								distance
-//								FROM flightsTable
-//								WHERE (origin = '$from') and (flightDate >= '$lowDate' and departureTime >= '$lowTime') and (flightDate <= '$highDate'  and departureTime <= '$highTime')"""
-//
-//								return listFlights(flightsQuery)
-					  println(s".. calling listFlightsFrom($sc, $from, $lowDateTime, $highDateTime, $degree")
-					  FlightService.listFlightsFrom(sc, from, lowDateTime, highDateTime, degree)
+						val flightsQuery = s"""SELECT
+								year,
+								dayOfMonth,
+								flightDate,
+								airlineId,
+								carrier,
+								flightNumber,
+								origin,
+								destination,
+								departureTime,
+								arrivalTime,
+								elapsedTime,
+								airTime,
+								distance
+								FROM flightsTable
+								WHERE (origin = '$from') and (flightDate >= '$lowDate' and departureTime >= '$lowTime') and (flightDate <= '$highDate'  and departureTime <= '$highTime')"""
+
+								return listFlights(flightsQuery)
+//					  println(s".. calling listFlightsFrom($sc, $from, $lowDateTime, $highDateTime, $degree")
+//					  FlightService.listFlightsFrom(sc, from, lowDateTime, highDateTime, degree)
 					}
 	}
 

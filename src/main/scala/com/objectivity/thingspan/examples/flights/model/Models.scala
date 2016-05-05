@@ -223,7 +223,6 @@ object AppConfig {
 
 
 object Tools {
-  com.objy.db.Objy.startup();
   
   def ltrimQuotes(s: String) = s.replaceAll("^\\\"", "")
   def rtrimQuotes(s: String) = s.replaceAll("\"$", "")
@@ -234,6 +233,7 @@ object Tools {
    */
   def registerClasses() {
     
+    com.objy.db.Objy.startup();
     val  connection = new Connection(AppConfig.Boot)
     
     println("Flights Register Classes");
