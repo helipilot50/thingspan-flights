@@ -10,6 +10,7 @@ import com.objectivity.thingspan.examples.flights.query.FlightService
 import org.apache.spark.SparkConf
 import org.apache.spark.SparkContext
 import com.objectivity.thingspan.examples.flights.model.Tools
+import com.objy.db.Connection
 
 object ThingSpanFlights {
   	def main(args: Array[String]) = {
@@ -53,7 +54,9 @@ object ThingSpanFlights {
 			if (cl.hasOption("v")){
 			  EasyVisual.show()
 			  
-			} else if (cl.hasOption("c")){
+			} else if (cl.hasOption("s")){
+			  com.objy.db.Objy.startup();
+        new Connection(AppConfig.Boot)
 			  Tools.registerClasses()
 			  
 			} else if (cl.hasOption("i")){

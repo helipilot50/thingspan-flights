@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat
 import com.objectivity.thingspan.examples.flights.model.AppConfig
 import com.objectivity.thingspan.examples.flights.model.Flight
 import scala.reflect.runtime.universe
+import com.objectivity.thingspan.examples.flights.model.Airport
 
 
 class Relationships {
@@ -37,7 +38,7 @@ object Relationships {
 					var flightsDF = sqlContext.read.
 					format("com.objy.spark.sql").
 					option("objy.bootFilePath", AppConfig.Boot).
-					option("objy.dataClassName", "com.objectivity.thingspan.examples.flights.Flight").
+					option("objy.dataClassName", Flight.FLIGHT_CLASS_NAME).
 					option("objy.addOidColumn", "flightOid").
 					load 
 					flightsDF.registerTempTable("flightsTable")
@@ -46,7 +47,7 @@ object Relationships {
 					val airportsDF = sqlContext.read.
 					format("com.objy.spark.sql").
 					option("objy.bootFilePath", AppConfig.Boot).
-					option("objy.dataClassName", "com.objectivity.thingspan.examples.flights.Airport").
+					option("objy.dataClassName", Airport.AIRPORT_CLASS_NAME).
 					option("objy.addOidColumn", "airportOid").
 					load 
 					airportsDF.registerTempTable("airportsTable")
@@ -57,7 +58,7 @@ object Relationships {
 						 * Spark SQL for origin airport and flight
 						 */
 				val flightOriginJoin = new StringBuilder()
-					flightOriginJoin.append("SELECT airportOid, flightOid "); 
+					flightOriginJoin.append("SELECT airportOid as originAirport, flightOid "); 
   				flightOriginJoin.append("from flightsTable inner join airportsTable ");    
   				flightOriginJoin.append("ON flightsTable.origin=airportsTable.IATA");
   
@@ -71,12 +72,12 @@ object Relationships {
 						mode(SaveMode.Overwrite).
   						format("com.objy.spark.sql").
   						option("objy.bootFilePath", AppConfig.Boot).
-  						option("objy.dataClassName", "com.objectivity.thingspan.examples.flights.Flight").
+  						option("objy.dataClassName", Flight.FLIGHT_CLASS_NAME).
   						option("objy.updateByOid", "flightOid").
   						save() 
 					
 				val flightDestinationJoin = new StringBuilder()
-					flightDestinationJoin.append("SELECT airportOid, flightOid "); 
+					flightDestinationJoin.append("SELECT airportOid as destinationAirport, flightOid "); 
   				flightDestinationJoin.append("from flightsTable inner join airportsTable ");    
   				flightDestinationJoin.append("ON flightsTable.destination=airportsTable.IATA");
 
@@ -90,7 +91,7 @@ object Relationships {
 						mode(SaveMode.Overwrite).
   					format("com.objy.spark.sql").
   						option("objy.bootFilePath", AppConfig.Boot).
-  						option("objy.dataClassName", "com.objectivity.thingspan.examples.flights.Flight").
+  						option("objy.dataClassName", Flight.FLIGHT_CLASS_NAME).
   						option("objy.updateByOid", "flightOid").
   						save() 
 

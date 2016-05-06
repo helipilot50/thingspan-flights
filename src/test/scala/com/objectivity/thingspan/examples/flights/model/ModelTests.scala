@@ -16,7 +16,7 @@ import org.scalatest.Ignore
 import com.objy.db.Transaction
 
 
-
+@Ignore
 class ModelTests extends FlatSpec {
   
 		val connection = new Connection(AppConfig.Boot);

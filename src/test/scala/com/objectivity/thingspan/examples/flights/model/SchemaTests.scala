@@ -17,7 +17,9 @@ import com.objy.data.schemaProvider.SchemaProvider
 import com.objy.data.LogicalType
 import org.scalatest.Matchers
 import com.objy.db.Transaction
+import org.scalatest.Ignore
 
+@Ignore
 class SchemaTests extends FlatSpec with Matchers{
   
   "The Schema test" should "create class definitions" in {

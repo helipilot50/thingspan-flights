@@ -314,8 +314,8 @@ object Tools {
               .addAttribute(LogicalType.INTEGER, "airTime")
               .addAttribute(LogicalType.INTEGER, "distance")
 		    
-        addToOne(flightClassBuilder, "to", Airport.AIRPORT_CLASS_NAME, "inboundFlights");
-        addToOne(flightClassBuilder, "from", Airport.AIRPORT_CLASS_NAME, "outboundFlights");
+        addToOne(flightClassBuilder, "destinationAirport", Airport.AIRPORT_CLASS_NAME, "inboundFlights");
+        addToOne(flightClassBuilder, "originAirport", Airport.AIRPORT_CLASS_NAME, "outboundFlights");
         
    	    println("\tCreated Flight schema");
 
@@ -338,8 +338,8 @@ object Tools {
               .addAttribute(LogicalType.STRING, "tz")
               .addAttribute(LogicalType.INTEGER, "distance")
 		    
-        addToMany(airportClassBuilder, "inboundFlights", Flight.FLIGHT_CLASS_NAME, "to");
-        addToMany(airportClassBuilder, "outboundFlights", Flight.FLIGHT_CLASS_NAME, "from");
+        addToMany(airportClassBuilder, "inboundFlights", Flight.FLIGHT_CLASS_NAME, "destinationAirport");
+        addToMany(airportClassBuilder, "outboundFlights", Flight.FLIGHT_CLASS_NAME, "originAirport");
    	    println("\tCreated Airport schema");
 
       val airlineClassBuilder = new ClassBuilder(
