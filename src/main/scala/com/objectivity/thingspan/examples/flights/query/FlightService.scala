@@ -27,6 +27,7 @@ import org.apache.spark.SparkConf
 import com.objectivity.thingspan.examples.flights.model.Tools
 import com.objectivity.thingspan.examples.flights.model.Airline
 import com.objy.db.Transaction
+import com.objy.data.LogicalType
 
 
 object FlightService {
@@ -88,9 +89,9 @@ object FlightService {
 			  val airportName = airportInstance.getAttributeValue("name").stringValue()
 			  val airportCity = airportInstance.getAttributeValue("city").stringValue()
 			  println(s"... Result: $airportIata - $airportName in $airportCity")
-			  val outboundFlights = airportInstance.getAttributeValue("outboundFlights").listValue()
-			  val size = outboundFlights.size()
-			   println(s"... outbound: $outboundFlights $size")
+			  val outboundFlights = airportInstance.getAttributeValue("outboundFlights")
+			  
+			   println(variableToString(outboundFlights))
 			}
 			
 			tx.commit();
@@ -131,4 +132,29 @@ object FlightService {
 		val sc = new SparkContext(conf)
 	  FlightService.listFlightsFrom(sc, "LAX", "201201010000", "201201012359", 1)
 	}
+	
+	def variableToString(attributeValue: Variable): String = {
+	  val varType = attributeValue.getSpecification().getLogicalType()
+	  var asString: String = varType match {
+      case LogicalType.INTEGER => java.lang.Long.toString(attributeValue.longValue())
+      case LogicalType.REFERENCE => {
+                val ref = attributeValue.referenceValue();
+                if (!ref.isNull)
+                  ref.getObjectId().toString()
+                else 
+                  null
+            }
+      case LogicalType.CHARACTER => Character.toString(attributeValue.charValue())
+      case LogicalType.STRING => attributeValue.stringValue()
+      case LogicalType.REAL => java.lang.Double.toString(attributeValue.doubleValue())
+      case LogicalType.LIST => {
+        val listVal = attributeValue.listValue()
+        val size = listVal.size()
+        "A list of size: " + size
+        }
+      case _ =>  null
+    }
+	  asString
+  }
+
 }

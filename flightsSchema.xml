@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ObjyXml
-  timeStamp="2188742907"
+  timeStamp="3381066383"
 >
   <Fd>
     <Schema>
@@ -81,23 +81,17 @@
                   position="13" visibility="private" arraySize="1" isVariableArray="false"
                   type="int32" defaultIntValue="0"
                 />
-                <RelationshipMember name="inboundFlights" id="15"
-                  position="14" visibility="private" arraySize="1" isVariableArray="false"
-                  referencedShapeNumber="1000001" isBidirectional="true"
-                  inverseIsToMany="false" inverseMemberId="15" inverseMemberName="to"
-                  isToMany="true" isShort="false" isInline="true"
-                  propagateDelete="false" propagateLocks="false"
-                  copyPolicy="drop" versionPolicy="drop"
-                  encodedRelationshipNumber="604979776"
+                <RefMember name="inboundFlights" id="15"
+                  position="14" visibility="private" arraySize="1" isVariableArray="true"
+                  referencedShapeNumber="1000001" isShort="false"
                 />
-                <RelationshipMember name="outboundFlights" id="16"
-                  position="15" visibility="private" arraySize="1" isVariableArray="false"
-                  referencedShapeNumber="1000001" isBidirectional="true"
-                  inverseIsToMany="false" inverseMemberId="16" inverseMemberName="from"
-                  isToMany="true" isShort="false" isInline="true"
-                  propagateDelete="false" propagateLocks="false"
-                  copyPolicy="drop" versionPolicy="drop"
-                  encodedRelationshipNumber="604979777"
+                <RefMember name="outboundFlights" id="16"
+                  position="15" visibility="private" arraySize="1" isVariableArray="true"
+                  referencedShapeNumber="1000001" isShort="false"
+                />
+                <RefMember name="flights" id="17"
+                  position="16" visibility="private" arraySize="1" isVariableArray="true"
+                  referencedShapeNumber="1000001" isShort="false"
                 />
               </Members>
             </Shape>
@@ -167,23 +161,17 @@
                   position="13" visibility="private" arraySize="1" isVariableArray="false"
                   type="int32" defaultIntValue="0"
                 />
-                <RelationshipMember name="to" id="15"
+                <RefMember name="destinationAirport" id="15"
                   position="14" visibility="private" arraySize="1" isVariableArray="false"
-                  referencedShapeNumber="1000000" isBidirectional="true"
-                  inverseIsToMany="true" inverseMemberId="15" inverseMemberName="inboundFlights"
-                  isToMany="false" isShort="false" isInline="true"
-                  propagateDelete="false" propagateLocks="false"
-                  copyPolicy="drop" versionPolicy="drop"
-                  encodedRelationshipNumber="403653184"
+                  referencedShapeNumber="1000000" isShort="false"
                 />
-                <RelationshipMember name="from" id="16"
+                <RefMember name="originAirport" id="16"
                   position="15" visibility="private" arraySize="1" isVariableArray="false"
-                  referencedShapeNumber="1000000" isBidirectional="true"
-                  inverseIsToMany="true" inverseMemberId="16" inverseMemberName="outboundFlights"
-                  isToMany="false" isShort="false" isInline="true"
-                  propagateDelete="false" propagateLocks="false"
-                  copyPolicy="drop" versionPolicy="drop"
-                  encodedRelationshipNumber="403653185"
+                  referencedShapeNumber="1000000" isShort="false"
+                />
+                <RefMember name="airline" id="17"
+                  position="16" visibility="private" arraySize="1" isVariableArray="false"
+                  referencedShapeNumber="1000002" isShort="false"
                 />
               </Members>
             </Shape>

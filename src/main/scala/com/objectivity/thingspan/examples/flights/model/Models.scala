@@ -284,12 +284,12 @@ object Tools {
   def trimQuotes(s: String) = rtrimQuotes(ltrimQuotes(s))
   
   /**
-   * register the persistent classes
+   * register the persistent classes to create the Schema
    */
   def registerClasses() {
     
     
-    println("Flights Register Classes");
+    println("Register Classes");
 
 			val floatSpec = new com.objy.data.dataSpecificationBuilder.RealSpecificationBuilder(Storage.Real.B64)
                   .setEncoding(Encoding.Real.IEEE)
@@ -314,9 +314,11 @@ object Tools {
               .addAttribute(LogicalType.INTEGER, "airTime")
               .addAttribute(LogicalType.INTEGER, "distance")
 		    
-        addToOne(flightClassBuilder, "destinationAirport", Airport.AIRPORT_CLASS_NAME, "inboundFlights");
-        addToOne(flightClassBuilder, "originAirport", Airport.AIRPORT_CLASS_NAME, "outboundFlights");
-        
+        addToOne(flightClassBuilder, "destinationAirport", Airport.AIRPORT_CLASS_NAME, null);
+        addToOne(flightClassBuilder, "originAirport", Airport.AIRPORT_CLASS_NAME, null);
+        addToOne(flightClassBuilder, "airline", Airline.AIRLINE_CLASS_NAME, null);
+        addToOne(flightClassBuilder, "route", Route.ROUTE_CLASS_NAME, null);
+       
    	    println("\tCreated Flight schema");
 
    	    val airportClassBuilder = new ClassBuilder(
@@ -327,19 +329,16 @@ object Tools {
               .addAttribute(LogicalType.STRING, "country")
               .addAttribute(LogicalType.STRING, "IATA")
               .addAttribute(LogicalType.STRING, "ICAO")
-              //.addAttribute(LogicalType.REAL, "latitude")
               .addAttribute("latitude", floatSpec)
-              //.addAttribute(LogicalType.REAL, "longitude")
    	          .addAttribute("longitude", floatSpec)
               .addAttribute(LogicalType.INTEGER, "altitude")
-              //.addAttribute(LogicalType.REAL, "timezone")
               .addAttribute("timezone", floatSpec)
               .addAttribute(LogicalType.STRING, "DST")
               .addAttribute(LogicalType.STRING, "tz")
               .addAttribute(LogicalType.INTEGER, "distance")
 		    
-        addToMany(airportClassBuilder, "inboundFlights", Flight.FLIGHT_CLASS_NAME, "destinationAirport");
-        addToMany(airportClassBuilder, "outboundFlights", Flight.FLIGHT_CLASS_NAME, "originAirport");
+        addToMany(airportClassBuilder, "inboundFlights", Flight.FLIGHT_CLASS_NAME, null);
+        addToMany(airportClassBuilder, "outboundFlights", Flight.FLIGHT_CLASS_NAME, null);
    	    println("\tCreated Airport schema");
 
       val airlineClassBuilder = new ClassBuilder(
@@ -352,6 +351,8 @@ object Tools {
           		.addAttribute(LogicalType.STRING, "callsign")
           		.addAttribute(LogicalType.STRING, "country")
           		.addAttribute(LogicalType.STRING, "active")
+          		
+        addToMany(airlineClassBuilder, "flights", Flight.FLIGHT_CLASS_NAME, null);
       println("\tCreated Airline schema")
           		
       val routeClassBuilder = new ClassBuilder(
@@ -365,6 +366,7 @@ object Tools {
               .addAttribute(LogicalType.STRING, "codeshare")
               .addAttribute(LogicalType.INTEGER, "stops")
               .addAttribute(LogicalType.STRING, "equipment")
+        addToMany(routeClassBuilder, "flights", Flight.FLIGHT_CLASS_NAME, null);
       println("\tCreated Route schema")
       
       val flightClass = flightClassBuilder.build();

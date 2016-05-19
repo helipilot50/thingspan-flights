@@ -112,6 +112,7 @@ object LoadData {
 				stop = java.lang.System.currentTimeMillis()
 				println("Time to ingest Flights" + (flightsCount) + " items is: " + (stop-start) + " ms")
 
+				flightsDF.show(5)
 
 			sc.stop
 	}

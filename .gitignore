@@ -8,3 +8,8 @@ target
 model/.tmpBin
 /dependency-reduced-pom.xml
 /bin/
+hs_err_pid2669.log
+hs_err_pid6471.log
+/derby.log
+*.JNL
+data/flights.db
